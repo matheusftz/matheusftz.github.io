@@ -2,62 +2,292 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Matheus Frantz Portfolio - Golden Minimalist</title>
-    <link rel="stylesheet" href="style.css" />
+    <title>Matheus Frantz Portfolio - Interactive</title>
+    <style>
+        /* CSS BÁSICO E LAYOUT */
+        body { font-family: 'Merriweather', serif; margin: 0; padding: 0; color: #e0e0e0; overflow-x: hidden; }
+        #game-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; background-color: #121212; background-image: url('https://www.transparenttextures.com/patterns/dark-denim.png'); background-repeat: repeat; background-attachment: fixed; }
+        
+        .top-bar, footer { pointer-events: none; }
+        .top-bar *, main *, footer * { pointer-events: auto; }
+
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem; background: rgba(10, 10, 10, 0.9); font-family: 'Cinzel', serif; font-weight: 700; text-transform: uppercase; font-size: 0.9rem; border-bottom: 2px solid #b8860b; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); position: sticky; top: 0; z-index: 1000; }
+        .top-bar .name { font-size: 1.2rem; letter-spacing: 0.15em; color: #ffd700; }
+        .top-bar .nav-links a { color: #e0e0e0; text-decoration: none; margin: 0 0.5rem; transition: color 0.3s ease, text-shadow 0.3s ease; }
+        .top-bar .nav-links a:hover { color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.8); }
+        .top-bar .nav-links .separator { color: #555; margin: 0 0.2rem; }
+        
+        main { padding: 2rem; max-width: 1200px; margin: auto; position: relative; z-index: 10; }
+        .intro { text-align: left; margin-bottom: 4rem; padding-top: 3rem; padding-left: 1rem; pointer-events: none; }
+        .intro h1 { font-family: 'Cinzel', serif; font-size: 3.8rem; color: #e0e0e0; margin-bottom: 0.8rem; letter-spacing: 0.08em; text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); }
+        .intro p { font-size: 1.2rem; color: #ccc; line-height: 1.6; }
+        
+        .project-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3.5rem; margin-top: 2rem; }
+        .project { background: #2a2a2a; border-radius: 8px; text-decoration: none; color: inherit; box-shadow: 0 0 15px rgba(0, 0, 0, 0.6), 0 0 8px rgba(255, 215, 0, 0.3); transition: transform 0.3s ease, box-shadow 0.3s ease; overflow: hidden; display: flex; flex-direction: column; border: 1px solid #555; }
+        .project img { width: 100%; height: 220px; object-fit: cover; display: block; border-bottom: 3px solid #b8860b; }
+        .project h3 { font-family: 'Cinzel', serif; margin: 1.2rem 1.2rem 0.6rem 1.2rem; color: #ffd700; letter-spacing: 0.05em; }
+        .project p { margin: 0 1.2rem 1.2rem 1.2rem; color: #ccc; font-size: 1rem; }
+        
+        footer { text-align: center; padding: 2.5rem; font-size: 0.9rem; color: #888; margin-top: 4rem; border-top: 2px solid #3a3a3a; background: rgba(10, 10, 10, 0.9); position: relative; z-index: 10; }
+        
+        /* === ESTILOS PARA O JOGO ==== */
+        :root {
+            --pixel-coin: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACLSURBVDhPzZJBDsAgCAMT/f+nP6lDu9hWFoKHDqGHIk3SHIKH2gOAZ0bA1p70bQIqgBpgBWbUaKsh6sC+j5nI7Tpg0Vfgv0A2A5rQyAhGkMwA0wBIbAY1wBg0QFgI2XzAD6YhVgOAgA/j3kUDG/fJSOZE5vAw8L83S7wJgDtwK/5lAgA+GgAAwE/a/AEPKz+S7sUeIgAAAABJRU5ErkJggg==');
+            --pixel-lock: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACMSURBVDhPY/z//z8DNQATMEoGkkXg8gE0XUAGgYnFwEAgcWcE0r0cSH4A8VEg+T8jA2gYdD2Q/A+SHwHxVEB6B2b/gfg/kPwgqj8Iie8DYt4PiB8G4n9D8j9IfoT1H4gxfyEIIg4Ac2I4CGoEMDInyADqDRB+A5JvQfIzIuR/YDCAAAMALg8hY/YxM8UAAAAASUVORK5CYII=');
+        }
+        
+        #bubble-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; pointer-events: none; }
+        .bubble { position: absolute; pointer-events: auto; cursor: pointer; will-change: transform; border-radius: 50%; background-color: rgba(255, 215, 0, 0.25); border: 1px solid rgba(255, 215, 0, 0.6); box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.5), 0 0 12px rgba(255, 215, 0, 0.4); }
+        #coin-balance { position: fixed; top: 100px; right: 2rem; z-index: 1001; background: rgba(10, 10, 10, 0.9); color: #ffd700; padding: 0.5rem 1rem; border-radius: 8px; font-family: 'Cinzel', serif; font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; border: 2px solid #b8860b; box-shadow: 0 0 10px rgba(255, 215, 0, 0.6); pointer-events: auto; }
+        .coin-icon { display: inline-block; width: 24px; height: 24px; background-image: var(--pixel-coin); background-size: contain; margin-right: 0.5rem; image-rendering: pixelated; }
+        .project { position: relative; }
+        .project.locked > img, .project.locked > h3, .project.locked > p { filter: grayscale(100%) brightness(0.5); transition: filter 0.3s ease; }
+        .project.locked:hover { transform: translateY(-8px); cursor: not-allowed; }
+        .project.unlocked:hover { transform: translateY(-8px); box-shadow: 0 0 25px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255, 215, 0, 0.7); }
+        .project .project-lock { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 2; display: none; flex-direction: column; justify-content: center; align-items: center; color: #ffd700; font-family: 'Cinzel', serif; pointer-events: none; border-radius: 8px; }
+        .project.locked .project-lock { display: flex; }
+        .project.unlocked .project-lock { display: none; }
+        .lock-icon { display: inline-block; width: 48px; height: 48px; background-image: var(--pixel-lock); background-size: contain; image-rendering: pixelated; }
+        .project-cost { font-size: 1.5rem; font-weight: 700; margin-top: 0.5rem; display: flex; align-items: center; }
+        .project-cost::before { content: ''; display: inline-block; width: 16px; height: 16px; background-image: var(--pixel-coin); background-size: contain; image-rendering: pixelated; margin-right: 0.25rem; }
+        .project.shake { animation: shake 0.5s; }
+        @keyframes shake { 0%, 100% { transform: translateY(0) translateX(0); } 25% { transform: translateY(-8px) translateX(-5px); } 75% { transform: translateY(-8px) translateX(5px); } }
+    
+        /* === ESTILOS PARA AS PARTÍCULAS DE EXPLOSÃO === */
+        .particle {
+            position: fixed;
+            background-color: #ffd700;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 25;
+            animation: fadeOut 0.6s ease-out forwards;
+            will-change: transform, opacity;
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                transform: var(--transform-end);
+                opacity: 0;
+            }
+        }
+    </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div id="game-background"></div>
+    <div id="bubble-container"></div>
+    
+    <div id="coin-balance">
+        <span class="coin-icon"></span>
+        <span id="coin-count">0</span>
+    </div>
+
     <div class="top-bar">
         <span class="name">MATHEUS FRANTZ</span>
         <div class="nav-links">
-            <a href="index.html">WORK</a>
-            <span class="separator">/</span>
-            <a href="contact.html">CONTACT</a>
+            <a href="index.html">WORK</a> <span class="separator">/</span> <a href="contact.html">CONTACT</a>
         </div>
     </div>
     <main>
         <section class="intro">
             <h1>Here is some of my work</h1>
-            <p>Click on the image for more information</p>
+            <p>Click on the bubbles to collect coins and unlock the projects below!</p>
         </section>
-
         <section class="project-list">
-            <a class="project" href="projects/afterlife.html">
-                <img src="images/AfterlifeThumb.webp" alt="Afterlife Thumbnail">
-                <h3>Afterlife: The Judgement</h3>
-                <p>Made using Unity, 2016.</p>
-            </a>
-            <a class="project" href="projects/project-lua.html">
-                <img src="images/LuaThumb.webp" alt="Project L.U.A. Thumbnail">
-                <h3>Project L.U.A.</h3>
-                <p>Made using Unity, 2017.</p>
-            </a>
-            <a class="project" href="projects/happy-sheep.html">
-                <img src="images/HappySheepThumb.webp" alt="Happy Sheep Thumbnail">
-                <h3>Happy Sheep</h3>
-                <p>Made using Unity, 2017.</p>
-            </a>
-            <a class="project" href="projects/heroes-of-metaverse.html">
-                <img src="path/to/heroes-of-metaverse-thumbnail.jpg" alt="Heroes of Metaverse Thumbnail">
-                <h3>Heroes of Metaverse</h3>
-                <p>Game Designer, Unity, 2022.</p>
-            </a>
-            <a class="project" href="projects/clean-castle.html">
-                <img src="path/to/clean-castle-thumbnail.jpg" alt="Clean Castle Thumbnail">
-                <h3>Clean Castle</h3>
-                <p>Level Designer, Unity, 2022.</p>
-            </a>
-            <a class="project" href="projects/from-the-main-square.html">
-                <img src="path/to/from-the-main-square-thumbnail.jpg" alt="From the Main Square Thumbnail">
-                <h3>From the Main Square</h3>
-                <p>Level Designer/Tech Artist, Unity, 2019.</p>
-            </a>
+             <a class="project" href="projects/afterlife.html" data-cost="10"><div class="project-lock"><span class="lock-icon"></span><span class="project-cost">10</span></div><img src="images/AfterlifeThumb.webp" alt="Afterlife Thumbnail"><h3>Afterlife: The Judgement</h3><p>Made using Unity, 2016.</p></a>
+            <a class="project" href="projects/project-lua.html" data-cost="15"><div class="project-lock"><span class="lock-icon"></span><span class="project-cost">15</span></div><img src="images/LuaThumb.webp" alt="Project L.U.A. Thumbnail"><h3>Project L.U.A.</h3><p>Made using Unity, 2017.</p></a>
+            <a class="project" href="projects/happy-sheep.html" data-cost="20"><div class="project-lock"><span class="lock-icon"></span><span class="project-cost">20</span></div><img src="images/HappySheepThumb.webp" alt="Happy Sheep Thumbnail"><h3>Happy Sheep</h3><p>Made using Unity, 2017.</p></a>
+            <a class="project" href="projects/heroes-of-metaverse.html" data-cost="25"><div class="project-lock"><span class="lock-icon"></span><span class="project-cost">25</span></div><img src="images/AfterlifeThumb.webp" alt="Heroes of Metaverse Thumbnail"><h3>Heroes of Metaverse</h3><p>Game Designer, Unity, 2022.</p></a>
+            <a class="project" href="projects/clean-castle.html" data-cost="30"><div class="project-lock"><span class="lock-icon"></span><span class="project-cost">30</span></div><img src="images/LuaThumb.webp" alt="Clean Castle Thumbnail"><h3>Clean Castle</h3><p>Level Designer, Unity, 2022.</p></a>
+            <a class="project" href="projects/from-the-main-square.html" data-cost="35"><div class="project-lock"><span class="lock-icon"></span><span class="project-cost">35</span></div><img src="images/HappySheepThumb.webp" alt="From the Main Square Thumbnail"><h3>From the Main Square</h3><p>Level Designer/Tech Artist, Unity, 2019.</p></a>
         </section>
     </main>
-    <footer>
-        <p>© Matheus Frantz</p>
-    </footer>
+    <footer><p>© Matheus Frantz</p></footer>
+
+<script>
+// SCRIPT FINAL, SIMPLIFICADO E CORRIGIDO COM EFEITO DE PARTÍCULAS
+document.addEventListener('DOMContentLoaded', () => {
+    const bubbleContainer = document.getElementById('bubble-container');
+    const coinCountElement = document.getElementById('coin-count');
+    const projects = document.querySelectorAll('.project');
+    let coinBalance = 0, unlockedProjects = [], bubbles = [], mouse = { x: -100, y: -100 };
+    let lastFrameTime = performance.now();
+
+    const TOP_BOUNDARY = -50;
+    const MAX_BUBBLES = 20;
+    const BUBBLE_INTERVAL = 750;
+    const BOUNCE_DAMPING = 1;
+    const HOVER_SCALE = 1.15;
+    const MAX_SPEED_X = 2;
+    const MAX_SPEED_Y = 3;
+
+    const saveData = () => { localStorage.setItem('mf_coinBalance', coinBalance); localStorage.setItem('mf_unlockedProjects', JSON.stringify(unlockedProjects)); };
+    const loadData = () => { coinBalance = parseInt(localStorage.getItem('mf_coinBalance') || '0', 10); unlockedProjects = JSON.parse(localStorage.getItem('mf_unlockedProjects') || '[]'); updateUI(); };
+    const updateUI = () => { coinCountElement.textContent = coinBalance; projects.forEach(p => { const href = p.getAttribute('href'); p.classList.toggle('locked', !unlockedProjects.includes(href)); p.classList.toggle('unlocked', unlockedProjects.includes(href)); }); };
+
+    function createExplosion(x, y, size) {
+        const particleCount = 8;
+        const container = document.body;
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            const particleSize = Math.random() * (size / 6) + 2;
+            particle.style.width = `${particleSize}px`;
+            particle.style.height = `${particleSize}px`;
+            particle.style.left = `${x + (size / 2) - (particleSize / 2)}px`;
+            particle.style.top = `${y + (size / 2) - (particleSize / 2)}px`;
+            const angle = Math.random() * 2 * Math.PI;
+            const distance = Math.random() * 50 + 20;
+            const endX = Math.cos(angle) * distance;
+            const endY = Math.sin(angle) * distance;
+            particle.style.setProperty('--transform-end', `translate(${endX}px, ${endY}px)`);
+            container.appendChild(particle);
+            setTimeout(() => {
+                particle.remove();
+            }, 600);
+        }
+    }
+
+    function popBubblesInObstacles() {
+        const currentObstacleRects = Array.from(document.querySelectorAll('.project'))
+                                            .map(elem => elem.getBoundingClientRect());
+        for (const b of [...bubbles]) {
+            if (b.clicked) continue;
+            const bubbleRect = { left: b.x, right: b.x + b.size, top: b.y, bottom: b.y + b.size };
+            for (const rect of currentObstacleRects) {
+                if (bubbleRect.right > rect.left && bubbleRect.left < rect.right &&
+                    bubbleRect.bottom > rect.top && bubbleRect.top < rect.bottom) {
+                    
+                    createExplosion(b.x, b.y, b.size);
+                    
+                    b.clicked = true;
+                    b.element.style.transition = 'transform 0.2s, opacity 0.2s';
+                    b.element.style.transform += ' scale(1.5)';
+                    b.element.style.opacity = '0';
+                    break;
+                }
+            }
+        }
+    }
+
+    function createBubble() {
+        if (bubbles.length >= MAX_BUBBLES) return;
+        const size = Math.random() * 30 + 20;
+        const bubbleElement = document.createElement('div');
+        bubbleElement.className = 'bubble';
+        bubbleElement.style.width = `${size}px`;
+        bubbleElement.style.height = `${size}px`;
+
+        const bubble = {
+            element: bubbleElement,
+            x: Math.random() * window.innerWidth,
+            y: window.innerHeight + size,
+            dx: (Math.random() - 0.5) * MAX_SPEED_X * 2,
+            dy: Math.random() * -MAX_SPEED_Y - 1.5,
+            size, id: Date.now() + Math.random(), scale: 1, clicked: false
+        };
+
+        bubble.element.addEventListener('click', () => {
+            if (bubble.clicked) return;
+            // Quando a bolha é clicada, também criamos a explosão
+            createExplosion(bubble.x, bubble.y, bubble.size);
+            
+            bubble.clicked = true; coinBalance++; updateUI();
+            bubble.element.style.transition = 'transform 0.2s, opacity 0.2s';
+            bubble.element.style.transform += ' scale(1.5)';
+            bubble.element.style.opacity = '0';
+        });
+
+        bubbles.push(bubble);
+        bubbleContainer.appendChild(bubbleElement);
+    }
+
+    function gameLoop(currentTime) {
+        const deltaTime = Math.min(2, (currentTime - lastFrameTime) / 16.67);
+        lastFrameTime = currentTime;
+
+        const currentObstacleRects = Array.from(document.querySelectorAll('.project'))
+                                             .map(elem => elem.getBoundingClientRect());
+
+        for (const b of [...bubbles]) {
+            if (b.clicked) continue;
+            b.x += b.dx * deltaTime;
+            b.y += b.dy * deltaTime;
+            b.dy += 0.001 * deltaTime;
+
+            if (b.x <= 0) { b.x = 0; b.dx *= -BOUNCE_DAMPING; }
+            if (b.x + b.size >= window.innerWidth) { b.x = window.innerWidth - b.size; b.dx *= -BOUNCE_DAMPING; }
+            if (b.y <= TOP_BOUNDARY) { b.y = TOP_BOUNDARY; b.dy *= -BOUNCE_DAMPING; }
+
+            for (const rect of currentObstacleRects) {
+                const bubbleRect = { left: b.x, right: b.x + b.size, top: b.y, bottom: b.y + b.size };
+                if (bubbleRect.right > rect.left && bubbleRect.left < rect.right && bubbleRect.bottom > rect.top && bubbleRect.top < rect.bottom) {
+                    const minOverlapX = Math.min(bubbleRect.right - rect.left, rect.right - bubbleRect.left);
+                    const minOverlapY = Math.min(bubbleRect.bottom - rect.top, rect.bottom - bubbleRect.top);
+                    if (minOverlapY < minOverlapX) {
+                        b.y += (b.dy > 0) ? -minOverlapY : minOverlapY;
+                        b.dy *= -BOUNCE_DAMPING;
+                    } else {
+                        b.x += (b.dx > 0) ? -minOverlapX : minOverlapX;
+                        b.dx *= -BOUNCE_DAMPING;
+                    }
+                    break;
+                }
+            }
+
+            const distX = mouse.x - (b.x + b.size / 2);
+            const distY = mouse.y - (b.y + b.size / 2);
+            const distance = Math.sqrt(distX * distX + distY * distY);
+            let targetScale = (distance < b.size / 2 + 10) ? HOVER_SCALE : 1;
+            b.scale += (targetScale - b.scale) * 0.2;
+            b.element.style.transform = `translate(${b.x}px, ${b.y}px) scale(${b.scale})`;
+
+            if (b.y > window.innerHeight + b.size) { b.clicked = true; }
+        }
+
+        const bubblesToRemove = bubbles.filter(b => b.clicked);
+        for (const b of bubblesToRemove) { if (b.element.parentElement) { b.element.remove(); } }
+        bubbles = bubbles.filter(b => !b.clicked);
+
+        requestAnimationFrame(gameLoop);
+    }
+
+    function initialize() {
+        loadData();
+
+        let scrollPopTimeout;
+        window.addEventListener('scroll', () => {
+            clearTimeout(scrollPopTimeout);
+            scrollPopTimeout = setTimeout(popBubblesInObstacles, 50);
+        }, { passive: true });
+
+        setInterval(createBubble, BUBBLE_INTERVAL);
+        setInterval(saveData, 5000);
+        window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+        projects.forEach(project => {
+            project.addEventListener('click', (e) => {
+                if (project.classList.contains('unlocked')) return;
+                e.preventDefault();
+                const cost = parseInt(project.getAttribute('data-cost'), 10);
+                if (coinBalance >= cost) {
+                    coinBalance -= cost; unlockedProjects.push(project.getAttribute('href')); updateUI(); saveData();
+                } else {
+                    project.classList.add('shake'); setTimeout(() => project.classList.remove('shake'), 500);
+                }
+            });
+        });
+
+        requestAnimationFrame(gameLoop);
+    }
+
+    initialize();
+});
+</script>
 </body>
 </html>

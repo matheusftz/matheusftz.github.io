@@ -2,13 +2,8 @@ body {
     font-family: 'Merriweather', serif;
     margin: 0;
     padding: 0;
-    background: #121212; /* Fundo mais escuro e neutro */
     color: #e0e0e0;
-    background-image: url('https://www.transparenttextures.com/patterns/dark-denim.png'); /* Mantém a textura escura sutil */
-    background-repeat: repeat;
-    background-attachment: fixed;
 }
-
 header {
     display: none;
 }
@@ -61,6 +56,8 @@ main {
     padding: 2rem;
     max-width: 1200px;
     margin: auto;
+    position: relative; /* Garante que o conteúdo fique sobre o fundo do jogo */
+    z-index: 10;
 }
 
 .intro {
@@ -260,4 +257,182 @@ footer p a:hover {
     background-color: #b8860b; /* Fundo bronze no hover */
     color: #1a1a1a; /* Texto escuro no hover */
     box-shadow: 0 0 12px rgba(255, 215, 0, 0.8);
+}
+
+
+/* =================================================== */
+/* === ESTILOS PARA O MINI-JOGO DE COLETAR MOEDAS ==== */
+/* =================================================== */
+
+/* Assets em Base64 para não precisar de imagens externas */
+:root {
+    --pixel-bubble: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIQSURBVHhe7drNq1RRGMfx581QKFgplhYWSmUpSFlYKPkD7KyFna2FhaAEFhYKSf8G+QcsLGwslSws5I/gC7goXgwzZ86dOzNzLnPgnpvdc859f5z5M/eC7u5uampqjEajWfT/QUREm/M8a5oG/A7wIsL6vq8650wQBEEURbHmeXi93n9t20ZRFJbI8zxnmgZ8D7B+S+f8Gvl/3/d1zpmgCIIoimLN8/B6vX/bto2iKCyR53nONJ2BfwGs39I5P9Z+/d/3fY1pGgiCIEiSZBljlmVZtYxhiQzDMAgC4JeAj4A6SdP6v3/C6/WuaZrwO8CLETbM+T5K5/z99Y5K5/z9Wfbw+5xzQRAEQRRFscYxXqe8G0VRWIYwDIIg+CXgI0CdpmndP6FpmvA7wIsQttr69X+d8wEYhvG9Xm+dphkEQZAkSZYxZl3X1bIsKxljSRGGYQRB8L+AXwE+pOsa/Qn/8z+LruuUZVkYhuH1egsYhuF7vV4YhtH3fY3fAX6E0Dnn++r69Z/P+ZvjOMz8/M5lWbHGY7yecxEEQRBFUbSNEkVRWCKMwxjHIgh+CvgIqNf1/Un4nHO8zvk/juM0TRN+B/gRQmf8/VWd8/eP2Vl/3znnBUEQBFEUxX5G3g2iKCyREgRBkCRJGsf+BvgRoNc0bfoTnOd5TNOE3wFexLC/9+s/53xRFMbDMIwxHMdx3znnBUEQBFEUxVbG4nVRFJZIkCRJlmVZxzp+BvgRoNc07R/47eP3GsdxiqIwxjRN+B3gRQyb8/3dOOcfx3HaNE0YhtH3fS/GGIwxBEEQBEFQlqWzLGscxygKwxhjjMEYjuMgCH4J+AioM35P3x/4W15OaZrmOE5jDD7n3h+gqioMw2iaZprmOE5jjDEIgiAIgqAoCsdxyrLMGIfjOGVZU5Zl1XUdwzAIgqAoyzLbtm2bJAlBEARBkCRJURRpmqYoCtM0RVGUJEmCIAiCIEkSjuMwxqIoiqIwxuI4DkEQBEFQlqVpmjDGIoqiKArDGMMyDAKgKH/4D38BvJc2J5Q2uSgAAAAASUVORK5CYII=');
+    --pixel-coin: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACLSURBVDhPzZJBDsAgCAMT/f+nP6lDu9hWFoKHDqGHIk3SHIKH2gOAZ0bA1p70bQIqgBpgBWbUaKsh6sC+j5nI7Tpg0Vfgv0A2A5rQyAhGkMwA0wBIbAY1wBg0QFgI2XzAD6YhVgOAgA/j3kUDG/fJSOZE5vAw8L83S7wJgDtwK/5lAgA+GgAAwE/a/AEPKz+S7sUeIgAAAABJRU5ErkJggg==');
+    --pixel-lock: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACMSURBVDhPY/z//z8DNQATMEoGkkXg8gE0XUAGgYnFwEAgcWcE0r0cSH4A8VEg+T8jA2gYdD2Q/A+SHwHxVEB6B2b/gfg/kPwgqj8Iie8DYt4PiB8G4n9D8j9IfoT1H4gxfyEIIg4Ac2I4CGoEMDInyADqDRB+A5JvQfIzIuR/YDCAAAMALg8hY/YxM8UAAAAASUVORK5CYII=');
+}
+
+/* Camada de fundo para as bolhas */
+#game-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    /* ESTILOS DE FUNDO MOVIDOS PARA CÁ */
+    background-color: #121212;
+    background-image: url('https://www.transparenttextures.com/patterns/dark-denim.png');
+    background-repeat: repeat;
+    background-attachment: fixed;
+}
+/* Placar de moedas */
+#coin-balance {
+    position: fixed;
+    top: 100px;
+    right: 2rem;
+    z-index: 1001; /* Acima da top-bar */
+    background: rgba(10, 10, 10, 0.9);
+    color: #ffd700;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-family: 'Cinzel', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    border: 2px solid #b8860b;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+}
+
+.coin-icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-image: var(--pixel-coin);
+    background-size: contain;
+    margin-right: 0.5rem;
+    image-rendering: pixelated; /* Mantém o estilo pixel art */
+}
+
+/* Estilo da Bolha */
+.bubble {
+    position: absolute;
+    bottom: -100px; /* Começa fora da tela */
+    background-image: var(--pixel-bubble);
+    background-size: contain;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+    pointer-events: auto; /* Bolhas podem ser clicadas */
+    cursor: pointer;
+    animation: floatUp linear forwards;
+    transition: transform 0.1s ease;
+    z-index: 1;
+}
+
+.bubble:hover {
+    transform: scale(1.1);
+}
+
+.bubble.pop {
+    animation: popEffect 0.3s ease-out forwards;
+}
+
+/* Animações */
+@keyframes floatUp {
+    to {
+        transform: translateY(-120vh) rotate(360deg);
+    }
+}
+
+@keyframes popEffect {
+    0% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  25% { transform: translateY(-8px) translateX(-5px); }
+  75% { transform: translateY(-8px) translateX(5px); }
+}
+
+/* Estilos dos Projetos Bloqueados */
+.project {
+    position: relative; /* Necessário para posicionar o .project-lock */
+}
+
+.project.locked > img,
+.project.locked > h3,
+.project.locked > p {
+    filter: grayscale(100%) brightness(0.5);
+    transition: filter 0.3s ease;
+}
+
+.project.locked:hover {
+    transform: translateY(-8px); /* Mantém o hover, mas o shake vai sobrepor */
+    cursor: not-allowed;
+}
+
+.project.unlocked:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255, 215, 0, 0.7);
+}
+
+.project.locked .project-lock {
+    display: flex;
+}
+
+.project.unlocked .project-lock {
+    display: none;
+}
+
+.project-lock {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #ffd700;
+    font-family: 'Cinzel', serif;
+    pointer-events: none; /* Permite que o clique passe para o <a> pai */
+    border-radius: 8px;
+}
+
+.lock-icon {
+    display: inline-block;
+    width: 48px;
+    height: 48px;
+    background-image: var(--pixel-lock);
+    background-size: contain;
+    image-rendering: pixelated;
+}
+
+.project-cost {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.project-cost::before {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-image: var(--pixel-coin);
+    background-size: contain;
+    image-rendering: pixelated;
+    margin-right: 0.25rem;
+}
+
+.project.shake {
+    animation: shake 0.5s;
 }
