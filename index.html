@@ -128,7 +128,7 @@
             color: inherit; 
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.6), 0 0 8px rgba(255, 215, 0, 0.3); 
             transition: transform 0.3s ease, box-shadow 0.3s ease; 
-            overflow: hidden; 
+            overflow: hidden; /* Keep this to clip content INSIDE the card, but sparkles will be outside */
             display: flex; 
             flex-direction: column; 
             border: 1px solid #555; 
@@ -175,12 +175,12 @@
         }
         
         #bubble-container { 
-            position: fixed; 
+            position: fixed; /* Mantenha fixed para que os sparkles flutuem sobre o conteúdo */
             top: 0; 
             left: 0; 
             width: 100%; 
             height: 100%; 
-            z-index: 20; 
+            z-index: 20; /* Garante que os sparkles estejam acima dos cards */
             pointer-events: none; 
         }
         
@@ -462,7 +462,7 @@
 
         /* Renomeado: Estilo para um sparkle grande individual (192x192px) */
         .individual-super-sparkle { 
-            position: absolute;
+            position: absolute; /* Agora posicionado absolutamente dentro de bubble-container */
             width: 192px; 
             height: 192px; 
             background-image: var(--sparkle-spritesheet); 
@@ -484,6 +484,7 @@
         /* Esta animação usará as variáveis CSS definidas no JavaScript */
         @keyframes combined-sparkle-motion {
             0% { 
+                /* Começa sem translação (posição inicial já é aleatória) */
                 transform: translate(0, 0) rotate(0deg); 
                 opacity: 0; 
             }
@@ -494,7 +495,7 @@
                 opacity: 1; 
             }
             100% { 
-                /* Agora, a translação é para fora (X e Y) e a rotação final */
+                /* Translação para fora e rotação final */
                 transform: translate(var(--sparkle-travel-x, 0), var(--sparkle-travel-y, 0)) rotate(var(--sparkle-final-rotation, 0deg)); 
                 opacity: 0; /* Fade-out */
             }
@@ -683,58 +684,79 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Função para animação de desbloqueio de projeto (flash e múltiplos sparkles)
-    function animateProjectUnlock(projectElement) {
+   function animateProjectUnlock(projectElement) {
         // 1. Efeito de Flash
         const flash = document.createElement('div');
         flash.className = 'project-flash';
         projectElement.appendChild(flash); 
 
         // 2. Múltiplos Super Sparkles (192x192px)
-        const numberOfSparkles = 3; // Quantidade de sparkles grandes a criar (ajuste conforme desejar)
+        const numberOfSparkles = 5; // Quantidade de sparkles grandes a criar (ajuste conforme desejar)
         const sparkleDimension = 192; // O tamanho que você configurou para CADA sparkle (192x192px)
-        const animationDuration = 1; // Duração total da animação em segundos (corresponde ao seu sparkle-animation)
+        const animationDuration = 0.8; // Duração total da animação em segundos (corresponde ao seu sparkle-animation)
 
         const projectRect = projectElement.getBoundingClientRect();
-        // Calculate the center of the project element relative to its own top-left corner
-        const centerX = projectRect.width / 2;
-        const centerY = projectRect.height / 2;
-
+        const marginFromEdge = 15; // How many pixels *inside* the edge the sparkle should start
 
         for (let i = 0; i < numberOfSparkles; i++) {
             const sparkle = document.createElement('div');
-            sparkle.className = 'individual-super-sparkle'; // Usa a nova classe para sparkles grandes
+            sparkle.className = 'individual-super-sparkle'; 
 
-            // Position the sparkle initially at the center of the project card
-            // Adjust by half of sparkleDimension to truly center its origin
-            sparkle.style.left = `${centerX - sparkleDimension / 2}px`;
-            sparkle.style.top = `${centerY - sparkleDimension / 2}px`;
+            let startX, startY;
+            let travelX, travelY;
 
-            // --- Configurações aleatórias para rotação e movimento para fora ---
-            // These values define how far out the sparkle moves from the center
-            const maxTravelDistance = Math.max(projectRect.width, projectRect.height) * 0.25; // Go beyond the card
-            const angle = Math.random() * Math.PI * 2; // Random angle in radians (0 to 2PI)
-            const travelX = Math.cos(angle) * (maxTravelDistance + Math.random() * 10); // Move outwards X
-            const travelY = Math.sin(angle) * (maxTravelDistance + Math.random() * 10); // Move outwards Y
+            // Randomly pick one of the four edges
+            const edge = Math.floor(Math.random() * 4); // 0: top, 1: right, 2: bottom, 3: left
 
-            const rotationDegrees = 180 + (Math.random() * -360); // Rotates between 360deg (1 turn) and 1080deg (3 turns)
-            const rotationDirection = Math.random() < 0.5 ? 1 : -1; // -1 for counter-clockwise rotation
-            const rotationSpeedMultiplier = (0.5 + Math.random() * 1.5); // Rotation speed: 0.5x to 2x (inverse duration)
+            switch (edge) {
+                case 0: // Top edge
+                    startX = projectRect.left + (Math.random() * (projectRect.width - marginFromEdge * 2)) + marginFromEdge;
+                    startY = projectRect.top + marginFromEdge;
+                    travelX = (Math.random() - 0.5) * 50; // Some horizontal scatter
+                    travelY = - (100 + Math.random() * 50); // Primarily upwards (negative Y for upwards movement)
+                    break;
+                case 1: // Right edge
+                    startX = projectRect.left + projectRect.width - marginFromEdge;
+                    startY = projectRect.top + (Math.random() * (projectRect.height - marginFromEdge * 2)) + marginFromEdge;
+                    travelX = 100 + Math.random() * 50; // Primarily rightwards
+                    travelY = (Math.random() - 0.5) * 50; // Some vertical scatter
+                    break;
+                case 2: // Bottom edge
+                    startX = projectRect.left + (Math.random() * (projectRect.width - marginFromEdge * 2)) + marginFromEdge;
+                    startY = projectRect.top + projectRect.height - marginFromEdge;
+                    travelX = (Math.random() - 0.5) * 50; // Some horizontal scatter
+                    travelY = 100 + Math.random() * 50; // Primarily downwards
+                    break;
+                case 3: // Left edge
+                    startX = projectRect.left + marginFromEdge;
+                    startY = projectRect.top + (Math.random() * (projectRect.height - marginFromEdge * 2)) + marginFromEdge;
+                    travelX = - (100 + Math.random() * 50); // Primarily leftwards
+                    travelY = (Math.random() - 0.5) * 50; // Some vertical scatter
+                    break;
+            }
 
-            // Aplica as variáveis CSS
+            // Adjust for sparkle's own dimension to center its sprite origin at the chosen point
+            // This adjustment is relative to the sparkle's position, so it's fine.
+            sparkle.style.left = `${startX - sparkleDimension / 2}px`;
+            sparkle.style.top = `${startY - sparkleDimension / 2}px`;
+
+            const rotationDegrees = 180 + (Math.random() * -180); 
+            const rotationDirection = Math.random() < 0.5 ? 1 : -1; 
+            const rotationSpeedMultiplier = (0.5 + Math.random() * 1.2); 
+
             sparkle.style.setProperty('--sparkle-travel-x', `${travelX}px`);
             sparkle.style.setProperty('--sparkle-travel-y', `${travelY}px`);
             sparkle.style.setProperty('--sparkle-final-rotation', `${rotationDegrees * rotationDirection}deg`);
 
-            // Combina a animação do spritesheet com a nova animação de movimento e rotação.
             sparkle.style.animation = `
                 sparkle-animation ${animationDuration}s steps(18) forwards,
                 combined-sparkle-motion ${animationDuration / rotationSpeedMultiplier}s ease-out forwards
             `;
             
-            // Adiciona um pequeno atraso para os sparkles aparecerem em cascata
-            sparkle.style.animationDelay = `${i * 0.2}s`; // Atraso de 200ms entre cada sparkle
+            sparkle.style.animationDelay = `${i * 0.2}s`; 
 
-            projectElement.appendChild(sparkle);
+            // IMPORTANT: Append sparkle to bubbleContainer (or body) so it's not clipped by project overflow:hidden
+            bubbleContainer.appendChild(sparkle);
 
             // Remove o sparkle após a animação completa
             setTimeout(() => {
@@ -744,8 +766,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
             if (flash) flash.remove();
-            updateUI(); // Atualiza a UI para remover o overlay e o filtro de cinza
-        }, 1000); // A duração do flash (mais curta)
+            updateUI(); 
+        }, 1000); 
     }
 
     function popBubblesInObstacles() {
