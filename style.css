@@ -1,48 +1,172 @@
 body {
-    font-family: 'Roboto Mono', monospace; /* Exemplo de fonte tech */
+    font-family: 'Roboto Mono', monospace; /* Fonte principal */
     margin: 0;
     padding: 0;
-    background: #121212; /* Fundo mais escuro */
-    color: #e0e0e0; /* Cor de texto mais clara */
+    background: #1a1a1a; /* Fundo mais escuro */
+    color: #e0e0e0; /* Cor de texto padrão */
 }
 
+/* Esconde o cabeçalho original, se houver */
 header {
-    background: #0a0a0a; /* Fundo ainda mais escuro para o cabeçalho */
-    color: #00ffff; /* Cor de destaque para o título (ciano) */
-    padding: 2rem;
-    text-align: center;
-    border-bottom: 2px solid #00ffff; /* Borda de destaque */
+    display: none;
 }
 
-h1, h2, h3 {
-    font-family: 'Oxanium', sans-serif; /* Exemplo de fonte para títulos */
+main {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.intro {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-top: 2rem; /* Espaçamento no topo */
+}
+
+.intro h1 {
+    font-family: 'Oxanium', sans-serif; /* Fonte para o título principal */
+    font-size: 3rem;
+    color: #00ffff; /* Ciano para destaque */
+    margin-bottom: 0.5rem;
+}
+
+.intro p {
+    font-size: 1.1rem;
+    color: #999;
+}
+
+.skills-short {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 1.5rem;
+    background-color: #2a2a2a; /* Fundo para a seção de habilidades */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); /* Pequeno glow */
+}
+
+.skills-short h2 {
+    font-family: 'Oxanium', sans-serif;
     color: #00ffff;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.skills-short p {
+    font-size: 1rem;
+    color: #ccc;
+    line-height: 1.5;
+}
+
+.project-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 3 colunas, responsivo */
+    gap: 2rem; /* Espaçamento entre os cards */
+    margin-top: 2rem;
 }
 
 .project {
-    background: #1e1e1e; /* Fundo dos projetos mais escuro */
+    background: #2a2a2a; /* Fundo dos cards de projeto */
     border-radius: 8px;
     text-decoration: none;
     color: inherit;
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.4); /* Sombra com glow ciano */
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 0 8px rgba(0, 255, 255, 0.3); /* Sombra com glow ciano */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     overflow: hidden;
     display: flex;
     flex-direction: column;
 }
 
 .project:hover {
-    transform: scale(1.03);
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.7); /* Glow mais intenso no hover */
+    transform: translateY(-5px); /* Efeito de elevação no hover */
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.6); /* Glow mais intenso */
 }
 
-/* Outros estilos para .project img, p etc. */
+.project img {
+    width: 100%;
+    height: 200px; /* Altura fixa para thumbnails */
+    object-fit: cover;
+    display: block;
+    border-bottom: 2px solid #00ffff; /* Linha de destaque abaixo da imagem */
+}
+
+.project h3 {
+    font-family: 'Oxanium', sans-serif;
+    margin: 1rem 1rem 0.5rem 1rem;
+    color: #00ffff; /* Título do projeto em ciano */
+}
+
+.project p {
+    margin: 0 1rem 0.5rem 1rem;
+    color: #aaa;
+    font-size: 0.95rem;
+}
+
+.project p.role {
+    font-size: 0.85rem;
+    color: #777;
+    margin-bottom: 1rem;
+}
+
+/* Estilos para a página de detalhes do projeto (afterlife.html) */
+.video iframe {
+    width: 100%;
+    max-width: 800px; /* Limita a largura do vídeo */
+    height: 450px; /* Proporção 16:9 */
+    display: block;
+    margin: 2rem auto;
+    border: 2px solid #00ffff; /* Borda de destaque no vídeo */
+}
+
+.description {
+    background-color: #2a2a2a;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+    margin-bottom: 2rem;
+}
+
+.description h2 {
+    font-family: 'Oxanium', sans-serif;
+    color: #00ffff;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.gallery-grid img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid #00ffff; /* Borda sutil nas imagens da galeria */
+}
+
+.gallery-grid img:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+}
 
 footer {
     text-align: center;
     padding: 2rem;
     font-size: 0.9rem;
     color: #777;
-    margin-top: 2rem;
-    border-top: 1px solid #333; /* Separador */
+    margin-top: 3rem;
+    border-top: 1px solid #3a3a3a; /* Separador sutil */
+}
+
+footer p a {
+    color: #00ffff; /* Cor do link de voltar */
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+footer p a:hover {
+    color: #00e0e0;
 }
