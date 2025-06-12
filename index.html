@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Matheus Frantz Portfolio - Interactive</title>
+    <title>Matheus Frantz Portfolio</title>
     <style>
         /* CSS BÁSICO E LAYOUT */
         body { 
@@ -99,7 +99,7 @@
         .project-list { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-            gap: 3.5rem; /* Valor padrão para telas maiores */
+            gap: 5.5rem; /* Valor padrão para telas maiores */
             margin-top: 2rem; 
         }
 
@@ -431,7 +431,7 @@
     <main>
         <section class="intro">
             <h1>Here is some of my work</h1>
-            <p>Clique nas moedas para coletá-las e desbloquear os projetos abaixo!</p>
+            <p>Collect coins to unlock the projects below!</p>
         </section>
 
         <section class="project-list">
@@ -457,12 +457,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastFrameTime = performance.now();
 
     let TOP_BOUNDARY = -50; 
-    const MAX_BUBBLES = 20; 
-    const BUBBLE_INTERVAL = 750; 
+    const MAX_BUBBLES = 15; 
+    const BUBBLE_INTERVAL = 350; 
     const BOUNCE_DAMPING = 1;
-    const HOVER_SCALE = 1.15;
-    const MAX_SPEED_X = 2; 
-    const MAX_SPEED_Y_BASE = 1.5; 
+    const HOVER_SCALE = 1.25;
+    const MAX_SPEED_X = 3; 
+    const MAX_SPEED_Y_BASE = 2; 
 
     const GOLD_COIN_VALUE = 5;
     const GOLD_COIN_SIZE = 48; 
