@@ -99,9 +99,28 @@
         .project-list { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-            gap: 3.5rem; 
+            gap: 3.5rem; /* Valor padrão para telas maiores */
             margin-top: 2rem; 
         }
+
+        /* Ajustes para telas menores (ex: <= 768px, um breakpoint comum para tablets/celulares) */
+        @media (max-width: 768px) {
+            .project-list {
+                gap: 2rem; /* Reduz o espaçamento entre os cards em telas menores */
+            }
+        }
+
+        /* Você pode adicionar outro breakpoint para telas ainda menores se necessário */
+        @media (max-width: 480px) {
+            .project-list {
+                gap: 1.5rem; /* Mais espaçamento para telas de celular */
+            }
+            /* Ajusta o padding do main para dar mais respiro */
+            main {
+                padding: 1rem;
+            }
+        }
+        
         .project { 
             background: #2a2a2a; 
             border-radius: 8px; 
@@ -220,16 +239,24 @@
            to { background-position-x: -432px; } /* 6 frames * 72px */
         }
 
-        #coin-balance { 
+        /* Container para o saldo e os botões */
+        #game-controls {
             position: fixed; 
             top: 100px; 
             right: 2rem; 
             z-index: 1001; 
+            display: flex;
+            flex-direction: column; /* Botões um abaixo do outro */
+            gap: 10px; /* Espaçamento entre o saldo e os botões */
+            pointer-events: none; /* Para não interferir com o jogo, mas os filhos são auto */
+        }
+
+        #coin-balance { 
             background: rgba(10, 10, 10, 0.9); 
             color: #ffd700; 
             padding: 0.5rem 1rem; 
             border-radius: 8px; 
-            font-family: 'Cinzel', serif; 
+            font-family: 'Press Start 2P', cursive; 
             font-size: 1.5rem; 
             font-weight: 700; 
             display: flex; 
@@ -246,6 +273,45 @@
             background-size: contain; 
             margin-right: 0.5rem; 
             image-rendering: pixelated; 
+        }
+
+        /* ESTILO PARA O TEXTO FLUTUANTE DE PONTUAÇÃO */
+        .score-pop {
+            position: absolute;
+            color: #ffd700;
+            font-family: 'Press Start 2P', cursive; 
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+            pointer-events: none;
+            opacity: 0;
+            animation: score-fade-up 1s forwards;
+            z-index: 25; 
+        }
+
+        /* Novo estilo para o pop-up de moedas do botão */
+        .button-score-pop {
+            position: absolute; /* Para posicionamento em relação ao botão */
+            color: #ffd700;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+            pointer-events: none;
+            opacity: 0;
+            animation: score-fade-up 1s forwards; /* Reutiliza a mesma animação */
+            z-index: 1002; /* Acima de tudo */
+        }
+
+        @keyframes score-fade-up {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-50px) scale(1.2);
+                opacity: 0;
+            }
         }
 
         .project { position: relative; }
@@ -310,18 +376,50 @@
         }
         .project.shake { animation: shake 0.5s; }
         @keyframes shake { 0%, 100% { transform: translateY(0) translateX(0); } 25% { transform: translateY(-8px) translateX(-5px); } 75% { transform: translateY(-8px) translateX(5px); } }
+        
+        /* Estilos para os novos botões - agora dentro do #game-controls */
+        #game-controls button {
+            position: relative; /* Necessário para posicionar o pop-up da animação */
+            pointer-events: auto; /* Permite interação com os botões */
+            background-color: #b8860b; /* Cor dourada */
+            color: #121212;
+            border: none;
+            padding: 0.6rem 1rem; /* Padding ajustado para um botão menor */
+            border-radius: 5px;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 0.9rem; /* Tamanho da fonte ajustado */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            width: fit-content; /* Ajusta a largura ao conteúdo */
+            align-self: flex-end; /* Alinha o botão à direita dentro do flex column */
+        }
+
+        #game-controls button:hover {
+            background-color: #ffd700; 
+            transform: translateY(-2px);
+        }
+
+        #game-controls button:active {
+            transform: translateY(0);
+        }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Cinzel:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="game-background"></div>
     <div id="bubble-container"></div>
     
-    <div id="coin-balance">
-        <span class="coin-icon"></span>
-        <span id="coin-count">0</span>
+    <div id="game-controls">
+        <div id="coin-balance">
+            <span class="coin-icon"></span>
+            <span id="coin-count">0</span>
+        </div>
+        <button id="addCoinsBtn">Adicionar 100 Moedas</button>
+        <button id="resetProjectsBtn">Resetar Projetos</button>
     </div>
 
     <div class="top-bar">
@@ -335,6 +433,7 @@
             <h1>Here is some of my work</h1>
             <p>Clique nas moedas para coletá-las e desbloquear os projetos abaixo!</p>
         </section>
+
         <section class="project-list">
              <a class="project" href="projects/afterlife.html" data-cost="10"><div class="project-lock"><span class="lock-icon"></span><span class="project-cost">10</span></div><img src="images/AfterlifeThumb.webp" alt="Afterlife Thumbnail"><h3>Afterlife: The Judgement</h3><p>Made using Unity, 2016.</p></a>
             <a class="project" href="projects/project-lua.html" data-cost="15"><div class="project-lock"><span class="lock-icon"></span><span class="project-cost">15</span></div><img src="images/LuaThumb.webp" alt="Project L.U.A. Thumbnail"><h3>Project L.U.A.</h3><p>Made using Unity, 2017.</p></a>
@@ -351,30 +450,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const bubbleContainer = document.getElementById('bubble-container');
     const coinCountElement = document.getElementById('coin-count');
     const projects = document.querySelectorAll('.project');
+    const resetProjectsBtn = document.getElementById('resetProjectsBtn'); 
+    const addCoinsBtn = document.getElementById('addCoinsBtn'); 
+
     let coinBalance = 0, unlockedProjects = [], bubbles = [], mouse = { x: -100, y: -100 };
     let lastFrameTime = performance.now();
 
-    const TOP_BOUNDARY = -50;
-    const MAX_BUBBLES = 15;
-    const BUBBLE_INTERVAL = 250;
+    let TOP_BOUNDARY = -50; 
+    const MAX_BUBBLES = 20; 
+    const BUBBLE_INTERVAL = 750; 
     const BOUNCE_DAMPING = 1;
     const HOVER_SCALE = 1.15;
-    const MAX_SPEED_X = 3; // Velocidade horizontal máxima
-    const MAX_SPEED_Y_BASE = 2.5; // Velocidade vertical base para moedas mais lentas
+    const MAX_SPEED_X = 2; 
+    const MAX_SPEED_Y_BASE = 1.5; 
 
-    // Valores para moedas
     const GOLD_COIN_VALUE = 5;
-    const GOLD_COIN_SIZE = 48; // Tamanho em pixels
-    const GOLD_COIN_SPEED_MULTIPLIER = 2.0; // Moedas douradas são 2x mais rápidas
+    const GOLD_COIN_SIZE = 48; 
+    const GOLD_COIN_SPEED_MULTIPLIER = 2.0; 
 
     const SILVER_COIN_VALUE = 2;
-    const SILVER_COIN_SIZE = Math.round(GOLD_COIN_SIZE * 1.5); // 50% maior: 48 * 1.5 = 72px
+    const SILVER_COIN_SIZE = Math.round(GOLD_COIN_SIZE * 1.5); 
 
-    const SILVER_COIN_CHANCE = 3 / 6; // Para cada 5 cinzas, 1 dourada (5/6 chance de ser cinza)
+    const SILVER_COIN_CHANCE = 5 / 6; 
 
     const saveData = () => { localStorage.setItem('mf_coinBalance', coinBalance); localStorage.setItem('mf_unlockedProjects', JSON.stringify(unlockedProjects)); };
     const loadData = () => { coinBalance = parseInt(localStorage.getItem('mf_coinBalance') || '0', 10); unlockedProjects = JSON.parse(localStorage.getItem('mf_unlockedProjects') || '[]'); updateUI(); };
     const updateUI = () => { coinCountElement.textContent = coinBalance; projects.forEach(p => { const href = p.getAttribute('href'); p.classList.toggle('locked', !unlockedProjects.includes(href)); p.classList.toggle('unlocked', unlockedProjects.includes(href)); }); };
+
+    if (window.innerWidth <= 768) { 
+        const topBarHeight = document.querySelector('.top-bar').offsetHeight;
+        TOP_BOUNDARY = topBarHeight; 
+    }
 
     function triggerExplosion(x, y, isGray = false) {
         const explosion = document.createElement('div');
@@ -391,6 +497,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 600);
     }
 
+    function showScorePop(x, y, value, isButtonPop = false) {
+        const scorePop = document.createElement('div');
+        scorePop.className = isButtonPop ? 'button-score-pop' : 'score-pop';
+        scorePop.textContent = `+${value}`;
+
+        if (isButtonPop) {
+            // Posição relativa ao botão
+            const buttonRect = addCoinsBtn.getBoundingClientRect();
+            scorePop.style.left = `${buttonRect.left + buttonRect.width / 2 - scorePop.offsetWidth / 2}px`;
+            scorePop.style.top = `${buttonRect.top - 20}px`; // Ajuste para aparecer acima do botão
+            document.body.appendChild(scorePop); // Adiciona ao body para ignorar o overflow do #game-controls
+        } else {
+            scorePop.style.left = `${x + 20}px`; 
+            scorePop.style.top = `${y - 20}px`; 
+            bubbleContainer.appendChild(scorePop);
+        }
+
+        setTimeout(() => {
+            scorePop.remove();
+        }, 1000);
+    }
+
     function popBubblesInObstacles() {
         const currentObstacleRects = Array.from(document.querySelectorAll('.project'))
                                             .map(elem => elem.getBoundingClientRect());
@@ -403,7 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     b.clicked = true;
                     b.element.style.display = 'none';
-                    triggerExplosion(b.x, b.y, b.isGray); // Passa a informação se é cinza
+                    triggerExplosion(b.x, b.y, b.isGray); 
                     break;
                 }
             }
@@ -413,26 +541,34 @@ document.addEventListener('DOMContentLoaded', () => {
     function createBubble() {
         if (bubbles.length >= MAX_BUBBLES) return;
         
-        const isGray = Math.random() < SILVER_COIN_CHANCE; // Chance de ser moeda cinza
+        const isGray = Math.random() < SILVER_COIN_CHANCE; 
         const size = isGray ? SILVER_COIN_SIZE : GOLD_COIN_SIZE;
         const value = isGray ? SILVER_COIN_VALUE : GOLD_COIN_VALUE;
-        // Ajusta a velocidade vertical com base no tipo de moeda
-        const dy = isGray ? (Math.random() * -MAX_SPEED_Y_BASE - 0.5) : (Math.random() * -MAX_SPEED_Y_BASE - 0.5) * GOLD_COIN_SPEED_MULTIPLIER;
+        
+        let initialY;
+        let dy; 
 
+        if (Math.random() < 0.5) { 
+            initialY = TOP_BOUNDARY - size; 
+            dy = (Math.random() * MAX_SPEED_Y_BASE + 0.5) * (isGray ? 1 : GOLD_COIN_SPEED_MULTIPLIER); 
+        } else {
+            initialY = window.innerHeight + size; 
+            dy = (Math.random() * -MAX_SPEED_Y_BASE - 0.5) * (isGray ? 1 : GOLD_COIN_SPEED_MULTIPLIER); 
+        }
 
         const bubbleElement = document.createElement('div');
         bubbleElement.className = 'coin-sprite';
         if (isGray) {
             bubbleElement.classList.add('gray');
-            bubbleElement.style.animation = 'spin-coin-gray 0.8s steps(8) infinite'; // Aplica animação para cinza
+            bubbleElement.style.animation = 'spin-coin-gray 0.8s steps(8) infinite'; 
         }
 
         const bubble = {
             element: bubbleElement,
-            x: Math.random() * (window.innerWidth - size), // Garante que a moeda não nasça fora da tela
-            y: window.innerHeight + size,
-            dx: (Math.random() - 0.5) * MAX_SPEED_X * 2, // Velocidade horizontal aleatória
-            dy: dy, // Velocidade vertical ajustada
+            x: Math.random() * (window.innerWidth - size), 
+            y: initialY,
+            dx: (Math.random() - 0.5) * MAX_SPEED_X * 2, 
+            dy: dy, 
             size, id: Date.now() + Math.random(), scale: 1, clicked: false, value, isGray
         };
 
@@ -442,6 +578,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bubble.clicked = true; 
             coinBalance += bubble.value; 
             updateUI();
+            showScorePop(bubble.x, bubble.y, bubble.value); 
 
             bubble.element.style.display = 'none';
             triggerExplosion(bubble.x, bubble.y, bubble.isGray);
@@ -462,14 +599,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (b.clicked) continue;
             b.x += b.dx * deltaTime;
             b.y += b.dy * deltaTime;
-            b.dy += 0.001 * deltaTime; // Pequena gravidade para as bolhas
+            b.dy += 0.001 * deltaTime; 
 
-            // Colisões com as bordas da tela
             if (b.x <= 0) { b.x = 0; b.dx *= -BOUNCE_DAMPING; }
             if (b.x + b.size >= window.innerWidth) { b.x = window.innerWidth - b.size; b.dx *= -BOUNCE_DAMPING; }
-            if (b.y <= TOP_BOUNDARY) { b.y = TOP_BOUNDARY; b.dy *= -BOUNCE_DAMPING; }
+            
+            if ((b.dy < 0 && b.y + b.size < TOP_BOUNDARY) || (b.dy > 0 && b.y > window.innerHeight + b.size)) {
+                b.clicked = true; 
+            }
 
-            // Colisões com os projetos
             for (const rect of currentObstacleRects) {
                 const bubbleRect = { left: b.x, right: b.x + b.size, top: b.y, bottom: b.y + b.size };
                 if (bubbleRect.right > rect.left && bubbleRect.left < rect.right && bubbleRect.bottom > rect.top && bubbleRect.top < rect.bottom) {
@@ -482,20 +620,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         b.x += (b.dx > 0) ? -minOverlapX : minOverlapX;
                         b.dx *= -BOUNCE_DAMPING;
                     }
-                    break; // Sai do loop de retângulos após a primeira colisão
+                    break; 
                 }
             }
 
-            // Efeito hover (escala)
             const distX = mouse.x - (b.x + b.size / 2);
             const distY = mouse.y - (b.y + b.size / 2);
             const distance = Math.sqrt(distX * distX + distY * distY);
             let targetScale = (distance < b.size / 2 + 10) ? HOVER_SCALE : 1;
             b.scale += (targetScale - b.scale) * 0.2;
             b.element.style.transform = `translate(${b.x}px, ${b.y}px) scale(${b.scale})`;
-
-            // Remove bolhas que saem da tela por baixo
-            if (b.y > window.innerHeight + b.size) { b.clicked = true; }
         }
 
         const bubblesToRemove = bubbles.filter(b => b.clicked);
@@ -504,6 +638,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         requestAnimationFrame(gameLoop);
     }
+
+    // --- Funções de controle atualizadas ---
+    function resetAllProjects() {
+        unlockedProjects = []; 
+        coinBalance = 0; 
+        saveData();
+        updateUI();
+    }
+
+    function addOneHundredCoins() {
+        coinBalance += 100;
+        updateUI();
+        saveData();
+        showScorePop(0, 0, 100, true); // Chamar a animação +100
+    }
+    // --- Fim das funções de controle atualizadas ---
+
 
     function initialize() {
         loadData();
@@ -534,6 +685,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         });
+
+        // Adiciona event listeners para os novos botões
+        resetProjectsBtn.addEventListener('click', resetAllProjects);
+        addCoinsBtn.addEventListener('click', addOneHundredCoins); 
 
         requestAnimationFrame(gameLoop);
     }
