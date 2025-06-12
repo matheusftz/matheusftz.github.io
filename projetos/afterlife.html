@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Afterlife: The Judgement</title>
     <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/basiclightbox@5/dist/basicLightbox.min.css">
 </head>
 <body>
 <header>
@@ -23,14 +24,24 @@
 
     <section class="gallery">
         <h2>Gallery</h2>
-        <img src="https://0185867142.cbaul-cdnwnd.com/a9d14f9b89128eed11a7330a1def66c6/200000048-8e14e8e151/Afterlife%20%285%29.webp?ph=0185867142" alt="Screenshot 1" />
-        <img src="https://0185867142.cbaul-cdnwnd.com/a9d14f9b89128eed11a7330a1def66c6/200000049-6c4ae6c4b2/Afterlife%20%286%29.webp?ph=0185867142" alt="Screenshot 2" />
-        <img src="https://0185867142.cbaul-cdnwnd.com/a9d14f9b89128eed11a7330a1def66c6/200000034-6794267944/Afterlife%20%287%29.webp?ph=0185867142" alt="Screenshot 3" />
-        <img src="https://0185867142.cbaul-cdnwnd.com/a9d14f9b89128eed11a7330a1def66c6/200000045-edc07edc0a/Afterlife%20%281%29.webp?ph=0185867142" alt="Screenshot 4" />
+        <div class="gallery-grid">
+            <img src="https://0185867142.cbaul-cdnwnd.com/a9d14f9b89128eed11a7330a1def66c6/200000048-8e14e8e151/Afterlife%20%285%29.webp?ph=0185867142" alt="Screenshot 1" onclick="openLightbox(this.src)">
+            <img src="https://0185867142.cbaul-cdnwnd.com/a9d14f9b89128eed11a7330a1def66c6/200000049-6c4ae6c4b2/Afterlife%20%286%29.webp?ph=0185867142" alt="Screenshot 2" onclick="openLightbox(this.src)">
+            <img src="https://0185867142.cbaul-cdnwnd.com/a9d14f9b89128eed11a7330a1def66c6/200000034-6794267944/Afterlife%20%287%29.webp?ph=0185867142" alt="Screenshot 3" onclick="openLightbox(this.src)">
+            <img src="https://0185867142.cbaul-cdnwnd.com/a9d14f9b89128eed11a7330a1def66c6/200000045-edc07edc0a/Afterlife%20%281%29.webp?ph=0185867142" alt="Screenshot 4" onclick="openLightbox(this.src)">
+        </div>
     </section>
 </main>
 <footer>
     <p><a href="../index.html">← Voltar</a></p>
 </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/basiclightbox@5/dist/basicLightbox.min.js"></script>
+<script>
+    function openLightbox(src) {
+        const instance = basicLightbox.create(`<img src="${src}" width="800">`);
+        instance.show();
+    }
+</script>
 </body>
 </html>
