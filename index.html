@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Matheus Frantz Portfolio</title>
+    <title>Matheus Frantz Portfolio - Interactive</title>
     <style>
         /* CSS BÁSICO E LAYOUT */
         body { 
@@ -167,7 +167,9 @@
         /* === ESTILOS PARA O JOGO ==== */
         :root {
             --pixel-coin: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACLSURBVDhPzZJBDsAgCAMT/f+nP6lDu9hWFoKHDqGHIk3SHIKH2gOAZ0bA1p70bQIqgBpgBWbUaKsh6sC+j5nI7Tpg0Vfgv0A2A5rQyAhGkMwA0wBIbAY1wBg0QFgI2XzAD6YhVgOAgA/j3kUDG/fJSOZE5vAw8L83S7wJgDtwK/5lAgA+GgAAwE/a/AEPKz+S7sUeIgAAAABJRU5ErkJggg==');
-            --pixel-lock: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACMSURBVDhPY/z//z8DNQATMEoGkkXg8gE0XUAGgYnFwEAgcWcE0r0cSH4A8VEg+T8jA2gYdD2Q/A+SHwHxVEB6B2b/gfg/kPwgqj8Iie8DYt4PiB8G4n9D8j9IfoT1H4gxfyEIIg4Ac2I4CGoEMDInyADqDRB+A5JvQfIzIuR/YDCAAAMALg8hY/YxM8UAAAAASUVORK5CYII=');
+            
+            --sparkle-spritesheet: url('images/sparkle_spritesheet.png'); /* Novo asset para brilhos/sparkles */
+
             --coin-sprite-sheet: url('images/coin_spritesheet.png');
             --coin-explosion-sheet: url('images/coin_explosion.png');
         }
@@ -303,6 +305,21 @@
             z-index: 1002; /* Acima de tudo */
         }
 
+        /* NOVO: Estilo para o pop-up de erro */
+        .error-pop {
+            position: absolute;
+            color: #ff4d4d; /* Vermelho para erro */
+            font-family: 'Press Start 2P', cursive; 
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+            pointer-events: none;
+            opacity: 0;
+            animation: error-fade-up 1s forwards; /* Animação própria */
+            z-index: 25; 
+            white-space: nowrap; /* Garante que o texto não quebre linha */
+        }
+
         @keyframes score-fade-up {
             0% {
                 transform: translateY(0) scale(1);
@@ -314,86 +331,105 @@
             }
         }
 
+        /* NOVO: Animação para o pop-up de erro */
+        @keyframes error-fade-up {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-30px) scale(1.1); /* Sobe menos que o score pop */
+                opacity: 0;
+            }
+        }
+
         .project { position: relative; }
-        .project.locked > img, .project.locked > h3, .project.locked > p { 
-            filter: grayscale(100%) brightness(0.5); 
-            transition: filter 0.3s ease; 
-        }
-        .project.locked:hover { 
-            transform: translateY(-8px); 
-            cursor: not-allowed; 
-        }
-        .project.unlocked:hover { 
-            transform: translateY(-8px); 
-            box-shadow: 0 0 25px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255, 215, 0, 0.7); 
-        }
+
+        /* Contêiner da moeda e preço (substitui o cadeado) */
         .project .project-lock { 
             position: absolute; 
             top: 0; 
             left: 0; 
             width: 100%; 
             height: 100%; 
-            background: rgba(0, 0, 0, 0.5); 
+            background: rgba(0, 0, 0, 0.7); /* Overlay escuro */
             z-index: 2; 
-            display: none; 
+            display: none; /* Escondido por padrão, mostrado quando .locked */
             flex-direction: column; 
             justify-content: center; 
             align-items: center; 
             color: #ffd700; 
-            font-family: 'Cinzel', serif; 
-            pointer-events: none; 
+            font-family: 'Press Start 2P', cursive; /* Fonte do score */
+            pointer-events: none; /* Permite que o JS do card manipule o clique */
         }
-        .project.locked .project-lock { 
-            display: flex; 
-        }
-        .project.unlocked .project-lock { 
-            display: none; 
-        }
-        .lock-icon { 
-            display: inline-block; 
-            width: 48px; 
-            height: 48px; 
-            background-image: var(--pixel-lock); 
-            background-size: contain; 
-            image-rendering: pixelated; 
-        }
+
+        /* Estilos do preço e da moeda girando */
         .project-cost { 
             font-size: 1.5rem; 
             font-weight: 700; 
-            margin-top: 0.5rem; 
             display: flex; 
-            align-items: center; 
+            flex-direction: column; /* Moeda em cima, valor embaixo */
+            align-items: center; /* Centraliza a moeda e o valor */
+            color: #ffd700; /* Cor dourada para o preço */
         }
         .project-cost::before { 
             content: ''; 
-            display: inline-block; 
+            display: block; /* Mude para block para ficar acima do texto */
             width: 48px; 
             height: 48px; 
-            background-image: var(--pixel-coin); 
-            background-size: contain; 
+            background-image: var(--coin-sprite-sheet); /* Usa o spritesheet da moeda */
+            background-size: 384px 48px; /* 8 frames * 48px */
+            animation: spin-coin 0.8s steps(8) infinite; /* Animação de giro */
             image-rendering: pixelated; 
-            margin-right: 0.25rem; 
+            margin-bottom: 0.5rem; /* Espaçamento entre moeda e valor */
         }
+
+        /* Estilos para o estado 'locked' do projeto */
+        .project.locked > img, 
+        .project.locked > h3, 
+        .project.locked > p { 
+            filter: grayscale(100%) brightness(0.5); /* Conteúdo escurecido e cinza */
+            transition: filter 0.3s ease; 
+        }
+        .project.locked .project-lock { 
+            display: flex; /* Exibe o overlay da moeda/preço quando trancado */
+        }
+        .project.locked:hover { 
+            transform: translateY(-8px); 
+            cursor: pointer; /* Mantém o cursor padrão ou usa um pointer */
+        }
+
+        /* Estilos para o estado 'unlocked' do projeto */
+        .project.unlocked .project-lock { 
+            display: none; /* Esconde o overlay da moeda/preço quando desbloqueado */
+        }
+        .project.unlocked:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.8), 0 0 15px (255, 215, 0, 0.7); 
+            cursor: pointer; 
+        }
+        
+        /* Animação de Shake para cards */
         .project.shake { animation: shake 0.5s; }
         @keyframes shake { 0%, 100% { transform: translateY(0) translateX(0); } 25% { transform: translateY(-8px) translateX(-5px); } 75% { transform: translateY(-8px) translateX(5px); } }
-        
+
         /* Estilos para os novos botões - agora dentro do #game-controls */
         #game-controls button {
-            position: relative; /* Necessário para posicionar o pop-up da animação */
-            pointer-events: auto; /* Permite interação com os botões */
-            background-color: #b8860b; /* Cor dourada */
+            position: relative; 
+            pointer-events: auto; 
+            background-color: #b8860b; 
             color: #121212;
             border: none;
-            padding: 0.6rem 1rem; /* Padding ajustado para um botão menor */
+            padding: 0.6rem 1rem; 
             border-radius: 5px;
             font-family: 'Cinzel', serif;
             font-weight: 700;
-            font-size: 0.9rem; /* Tamanho da fonte ajustado */
+            font-size: 0.9rem; 
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-            width: fit-content; /* Ajusta a largura ao conteúdo */
-            align-self: flex-end; /* Alinha o botão à direita dentro do flex column */
+            width: fit-content; 
+            align-self: flex-end; 
         }
 
         #game-controls button:hover {
@@ -403,6 +439,65 @@
 
         #game-controls button:active {
             transform: translateY(0);
+        }
+
+        /* Novo: Efeito de Flash na compra */
+        .project-flash {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8); /* Flash branco */
+            z-index: 3; /* Acima do overlay de bloqueio */
+            opacity: 0;
+            animation: card-flash 1s ease-out forwards; /* Duração curta */
+            pointer-events: none;
+        }
+        @keyframes card-flash {
+            0% { opacity: 0; }
+            50% { opacity: 1; } /* Ponto de maior brilho */
+            100% { opacity: 0; }
+        }
+
+        /* Renomeado: Estilo para um sparkle grande individual (192x192px) */
+        .individual-super-sparkle { 
+            position: absolute;
+            width: 192px; 
+            height: 192px; 
+            background-image: var(--sparkle-spritesheet); 
+            background-size: auto 100%; 
+            z-index: 4; 
+            opacity: 0; 
+            pointer-events: none;
+            image-rendering: pixelated;
+            transform-origin: center; /* Permite rotação em torno do centro */
+            will-change: transform, opacity, background-position; /* Otimização de performance */
+        }
+        
+        /* Animação do Spritesheet */
+        @keyframes sparkle-animation {
+            to { background-position-x: -3456px; } 
+        }
+
+        /* NOVO: Keyframes que combinam subida/movimento para fora, fade e rotação */
+        /* Esta animação usará as variáveis CSS definidas no JavaScript */
+        @keyframes combined-sparkle-motion {
+            0% { 
+                transform: translate(0, 0) rotate(0deg); 
+                opacity: 0; 
+            }
+            10% { 
+                opacity: 1; /* Fade-in */
+            }
+            90% { 
+                opacity: 1; 
+            }
+            100% { 
+                /* Agora, a translação é para fora (X e Y) e a rotação final */
+                transform: translate(var(--sparkle-travel-x, 0), var(--sparkle-travel-y, 0)) rotate(var(--sparkle-final-rotation, 0deg)); 
+                opacity: 0; /* Fade-out */
+            }
         }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -418,8 +513,8 @@
             <span class="coin-icon"></span>
             <span id="coin-count">0</span>
         </div>
-        <button id="addCoinsBtn">Adicionar 100 Moedas</button>
-        <button id="resetProjectsBtn">Resetar Projetos</button>
+        <button id="addCoinsBtn">Add 100 Coins</button>
+        <button id="resetProjectsBtn">Reset Projects</button>
     </div>
 
     <div class="top-bar">
@@ -435,12 +530,54 @@
         </section>
 
         <section class="project-list">
-             <a class="project" href="projects/afterlife.html" data-cost="10"><div class="project-lock"><span class="lock-icon"></span><span class="project-cost">10</span></div><img src="images/AfterlifeThumb.webp" alt="Afterlife Thumbnail"><h3>Afterlife: The Judgement</h3><p>Made using Unity, 2016.</p></a>
-            <a class="project" href="projects/project-lua.html" data-cost="15"><div class="project-lock"><span class="lock-icon"></span><span class="project-cost">15</span></div><img src="images/LuaThumb.webp" alt="Project L.U.A. Thumbnail"><h3>Project L.U.A.</h3><p>Made using Unity, 2017.</p></a>
-            <a class="project" href="projects/happy-sheep.html" data-cost="20"><div class="project-lock"><span class="lock-icon"></span><span class="project-cost">20</span></div><img src="images/HappySheepThumb.webp" alt="Happy Sheep Thumbnail"><h3>Happy Sheep</h3><p>Made using Unity, 2017.</p></a>
-            <a class="project" href="projects/heroes-of-metaverse.html" data-cost="25"><div class="project-lock"><span class="lock-icon"></span><span class="project-cost">25</span></div><img src="images/AfterlifeThumb.webp" alt="Heroes of Metaverse Thumbnail"><h3>Heroes of Metaverse</h3><p>Game Designer, Unity, 2022.</p></a>
-            <a class="project" href="projects/clean-castle.html" data-cost="30"><div class="project-lock"><span class="lock-icon"></span><span class="project-cost">30</span></div><img src="images/LuaThumb.webp" alt="Clean Castle Thumbnail"><h3>Clean Castle</h3><p>Level Designer, Unity, 2022.</p></a>
-            <a class="project" href="projects/from-the-main-square.html" data-cost="35"><div class="project-lock"><span class="lock-icon"></span><span class="project-cost">35</span></div><img src="images/HappySheepThumb.webp" alt="From the Main Square Thumbnail"><h3>From the Main Square</h3><p>Level Designer/Tech Artist, Unity, 2019.</p></a>
+             <a class="project" href="projects/afterlife.html" data-cost="10">
+                <div class="project-lock">
+                    <span class="project-cost">10</span>
+                </div>
+                <img src="images/AfterlifeThumb.webp" alt="Afterlife Thumbnail">
+                <h3>Afterlife: The Judgement</h3>
+                <p>Made using Unity, 2016.</p>
+            </a>
+            <a class="project" href="projects/project-lua.html" data-cost="15">
+                <div class="project-lock">
+                    <span class="project-cost">15</span>
+                </div>
+                <img src="images/LuaThumb.webp" alt="Project L.U.A. Thumbnail">
+                <h3>Project L.U.A.</h3>
+                <p>Made using Unity, 2017.</p>
+            </a>
+            <a class="project" href="projects/happy-sheep.html" data-cost="20">
+                <div class="project-lock">
+                    <span class="project-cost">20</span>
+                </div>
+                <img src="images/HappySheepThumb.webp" alt="Happy Sheep Thumbnail">
+                <h3>Happy Sheep</h3>
+                <p>Made using Unity, 2017.</p>
+            </a>
+            <a class="project" href="projects/heroes-of-metaverse.html" data-cost="25">
+                <div class="project-lock">
+                    <span class="project-cost">25</span>
+                </div>
+                <img src="images/AfterlifeThumb.webp" alt="Heroes of Metaverse Thumbnail">
+                <h3>Heroes of Metaverse</h3>
+                <p>Game Designer, Unity, 2022.</p>
+            </a>
+            <a class="project" href="projects/clean-castle.html" data-cost="30">
+                <div class="project-lock">
+                    <span class="project-cost">30</span>
+                </div>
+                <img src="images/LuaThumb.webp" alt="Clean Castle Thumbnail">
+                <h3>Clean Castle</h3>
+                <p>Level Designer, Unity, 2022.</p>
+            </a>
+            <a class="project" href="projects/from-the-main-square.html" data-cost="35">
+                <div class="project-lock">
+                    <span class="project-cost">35</span>
+                </div>
+                <img src="images/HappySheepThumb.webp" alt="From the Main Square Thumbnail">
+                <h3>From the Main Square</h3>
+                <p>Level Designer/Tech Artist, Unity, 2019.</p>
+            </a>
         </section>
     </main>
     <footer><p>© Matheus Frantz</p></footer>
@@ -475,7 +612,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const saveData = () => { localStorage.setItem('mf_coinBalance', coinBalance); localStorage.setItem('mf_unlockedProjects', JSON.stringify(unlockedProjects)); };
     const loadData = () => { coinBalance = parseInt(localStorage.getItem('mf_coinBalance') || '0', 10); unlockedProjects = JSON.parse(localStorage.getItem('mf_unlockedProjects') || '[]'); updateUI(); };
-    const updateUI = () => { coinCountElement.textContent = coinBalance; projects.forEach(p => { const href = p.getAttribute('href'); p.classList.toggle('locked', !unlockedProjects.includes(href)); p.classList.toggle('unlocked', unlockedProjects.includes(href)); }); };
+    
+    // Função para atualizar a UI dos projetos (travados/destravados)
+    const updateUI = () => { 
+        coinCountElement.textContent = coinBalance; 
+        projects.forEach(p => { 
+            const href = p.getAttribute('href'); 
+            const isUnlocked = unlockedProjects.includes(href);
+            
+            p.classList.toggle('locked', !isUnlocked); 
+            p.classList.toggle('unlocked', isUnlocked); 
+
+            // Se desbloqueado, remove o filtro
+            const img = p.querySelector('img');
+            const h3 = p.querySelector('h3');
+            const par = p.querySelector('p');
+
+            if (img) img.style.filter = isUnlocked ? 'none' : 'grayscale(100%) brightness(0.5)';
+            if (h3) h3.style.filter = isUnlocked ? 'none' : 'grayscale(100%) brightness(0.5)';
+            if (par) par.style.filter = isUnlocked ? 'none' : 'grayscale(100%) brightness(0.5)';
+        }); 
+    };
 
     if (window.innerWidth <= 768) { 
         const topBarHeight = document.querySelector('.top-bar').offsetHeight;
@@ -497,26 +654,98 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 600);
     }
 
-    function showScorePop(x, y, value, isButtonPop = false) {
-        const scorePop = document.createElement('div');
-        scorePop.className = isButtonPop ? 'button-score-pop' : 'score-pop';
-        scorePop.textContent = `+${value}`;
-
+    function showScorePop(x, y, value, isButtonPop = false, isError = false) {
+        const popElement = document.createElement('div');
+        popElement.className = isError ? 'error-pop' : (isButtonPop ? 'button-score-pop' : 'score-pop');
+        popElement.textContent = isError ? "Not enough coins!" : `${value > 0 ? '+' : ''}${value}`;
+        
         if (isButtonPop) {
-            // Posição relativa ao botão
-            const buttonRect = addCoinsBtn.getBoundingClientRect();
-            scorePop.style.left = `${buttonRect.left + buttonRect.width / 2 - scorePop.offsetWidth / 2}px`;
-            scorePop.style.top = `${buttonRect.top - 20}px`; // Ajuste para aparecer acima do botão
-            document.body.appendChild(scorePop); // Adiciona ao body para ignorar o overflow do #game-controls
-        } else {
-            scorePop.style.left = `${x + 20}px`; 
-            scorePop.style.top = `${y - 20}px`; 
-            bubbleContainer.appendChild(scorePop);
+            const targetElement = value > 0 ? addCoinsBtn : coinCountElement; 
+            const targetRect = targetElement.getBoundingClientRect();
+            popElement.style.left = `${targetRect.left + targetRect.width / 2 - popElement.offsetWidth / 2}px`;
+            popElement.style.top = `${targetRect.top - 20}px`; 
+            document.body.appendChild(popElement); 
+        } else if (isError) {
+            // CORREÇÃO: Adicionar o scroll da página para posicionamento correto
+            popElement.style.left = `${x + window.scrollX - popElement.offsetWidth / 2}px`; 
+            popElement.style.top = `${y + window.scrollY - 40}px`; 
+            document.body.appendChild(popElement); 
+        }
+        else {
+            popElement.style.left = `${x + 20}px`; 
+            popElement.style.top = `${y - 20}px`; 
+            bubbleContainer.appendChild(popElement);
         }
 
         setTimeout(() => {
-            scorePop.remove();
+            popElement.remove();
         }, 1000);
+    }
+
+    // Função para animação de desbloqueio de projeto (flash e múltiplos sparkles)
+    function animateProjectUnlock(projectElement) {
+        // 1. Efeito de Flash
+        const flash = document.createElement('div');
+        flash.className = 'project-flash';
+        projectElement.appendChild(flash); 
+
+        // 2. Múltiplos Super Sparkles (192x192px)
+        const numberOfSparkles = 3; // Quantidade de sparkles grandes a criar (ajuste conforme desejar)
+        const sparkleDimension = 192; // O tamanho que você configurou para CADA sparkle (192x192px)
+        const animationDuration = 1; // Duração total da animação em segundos (corresponde ao seu sparkle-animation)
+
+        const projectRect = projectElement.getBoundingClientRect();
+        // Calculate the center of the project element relative to its own top-left corner
+        const centerX = projectRect.width / 2;
+        const centerY = projectRect.height / 2;
+
+
+        for (let i = 0; i < numberOfSparkles; i++) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'individual-super-sparkle'; // Usa a nova classe para sparkles grandes
+
+            // Position the sparkle initially at the center of the project card
+            // Adjust by half of sparkleDimension to truly center its origin
+            sparkle.style.left = `${centerX - sparkleDimension / 2}px`;
+            sparkle.style.top = `${centerY - sparkleDimension / 2}px`;
+
+            // --- Configurações aleatórias para rotação e movimento para fora ---
+            // These values define how far out the sparkle moves from the center
+            const maxTravelDistance = Math.max(projectRect.width, projectRect.height) * 0.25; // Go beyond the card
+            const angle = Math.random() * Math.PI * 2; // Random angle in radians (0 to 2PI)
+            const travelX = Math.cos(angle) * (maxTravelDistance + Math.random() * 10); // Move outwards X
+            const travelY = Math.sin(angle) * (maxTravelDistance + Math.random() * 10); // Move outwards Y
+
+            const rotationDegrees = 180 + (Math.random() * -360); // Rotates between 360deg (1 turn) and 1080deg (3 turns)
+            const rotationDirection = Math.random() < 0.5 ? 1 : -1; // -1 for counter-clockwise rotation
+            const rotationSpeedMultiplier = (0.5 + Math.random() * 1.5); // Rotation speed: 0.5x to 2x (inverse duration)
+
+            // Aplica as variáveis CSS
+            sparkle.style.setProperty('--sparkle-travel-x', `${travelX}px`);
+            sparkle.style.setProperty('--sparkle-travel-y', `${travelY}px`);
+            sparkle.style.setProperty('--sparkle-final-rotation', `${rotationDegrees * rotationDirection}deg`);
+
+            // Combina a animação do spritesheet com a nova animação de movimento e rotação.
+            sparkle.style.animation = `
+                sparkle-animation ${animationDuration}s steps(18) forwards,
+                combined-sparkle-motion ${animationDuration / rotationSpeedMultiplier}s ease-out forwards
+            `;
+            
+            // Adiciona um pequeno atraso para os sparkles aparecerem em cascata
+            sparkle.style.animationDelay = `${i * 0.2}s`; // Atraso de 200ms entre cada sparkle
+
+            projectElement.appendChild(sparkle);
+
+            // Remove o sparkle após a animação completa
+            setTimeout(() => {
+                sparkle.remove();
+            }, (animationDuration * 1000) + (i * 200) + 100); 
+        }
+
+        setTimeout(() => {
+            if (flash) flash.remove();
+            updateUI(); // Atualiza a UI para remover o overlay e o filtro de cinza
+        }, 1000); // A duração do flash (mais curta)
     }
 
     function popBubblesInObstacles() {
@@ -627,34 +856,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const distX = mouse.x - (b.x + b.size / 2);
             const distY = mouse.y - (b.y + b.size / 2);
             const distance = Math.sqrt(distX * distX + distY * distY);
-            let targetScale = (distance < b.size / 2 + 10) ? HOVER_SCALE : 1;
-            b.scale += (targetScale - b.scale) * 0.2;
+            let targetScale = distance < 100 ? HOVER_SCALE : 1; 
+
+            b.scale += (targetScale - b.scale) * 0.1 * deltaTime;
+
             b.element.style.transform = `translate(${b.x}px, ${b.y}px) scale(${b.scale})`;
         }
 
         const bubblesToRemove = bubbles.filter(b => b.clicked);
-        for (const b of bubblesToRemove) { if (b.element.parentElement) { b.element.remove(); } }
+        for (const b of bubblesToRemove) {
+            if (b.element.parentElement) {
+                b.element.remove();
+            }
+        }
         bubbles = bubbles.filter(b => !b.clicked);
 
         requestAnimationFrame(gameLoop);
     }
-
-    // --- Funções de controle atualizadas ---
-    function resetAllProjects() {
-        unlockedProjects = []; 
-        coinBalance = 0; 
-        saveData();
-        updateUI();
-    }
-
-    function addOneHundredCoins() {
-        coinBalance += 100;
-        updateUI();
-        saveData();
-        showScorePop(0, 0, 100, true); // Chamar a animação +100
-    }
-    // --- Fim das funções de controle atualizadas ---
-
 
     function initialize() {
         loadData();
@@ -671,24 +889,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
         projects.forEach(project => {
             project.addEventListener('click', (e) => {
-                if (project.classList.contains('unlocked')) return;
-                e.preventDefault();
+                // If the project is already unlocked, allow normal navigation
+                if (project.classList.contains('unlocked')) {
+                    return; 
+                }
+
+                e.preventDefault(); // Prevent default navigation for locked projects
+
                 const cost = parseInt(project.getAttribute('data-cost'), 10);
+
                 if (coinBalance >= cost) {
                     coinBalance -= cost; 
                     unlockedProjects.push(project.getAttribute('href')); 
-                    updateUI(); 
-                    saveData();
+                    saveData(); // Save state immediately
+
+                    // Call the new animation function for unlock (flash and sparkles)
+                    animateProjectUnlock(project);
+
+                    // Animate -VALUE on user balance
+                    showScorePop(0, 0, -cost, true); 
                 } else {
+                    // Shake animation for insufficient coins
                     project.classList.add('shake'); 
                     setTimeout(() => project.classList.remove('shake'), 500);
+                    // NEW: Display "Not enough coins!" message
+                    // Pass the click coordinates directly to showScorePop
+                    showScorePop(e.clientX, e.clientY, 0, false, true); 
                 }
             });
         });
 
-        // Adiciona event listeners para os novos botões
-        resetProjectsBtn.addEventListener('click', resetAllProjects);
-        addCoinsBtn.addEventListener('click', addOneHundredCoins); 
+        // Event listener for "Add Coins" button
+        addCoinsBtn.addEventListener('click', () => {
+            const addedCoins = 100;
+            coinBalance += addedCoins;
+            updateUI();
+            saveData();
+            showScorePop(0, 0, addedCoins, true); 
+        });
+
+        // Event listener for "Reset Projects" button
+        resetProjectsBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to reset all projects? This will not refund your coins!')) {
+                unlockedProjects = [];
+                // coinBalance = 0; // Optional: to also reset coins
+                saveData();
+                updateUI();
+            }
+        });
 
         requestAnimationFrame(gameLoop);
     }
