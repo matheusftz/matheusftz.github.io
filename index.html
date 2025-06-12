@@ -204,7 +204,18 @@
             height: 72px;
             background-size: 576px 72px; /* 8 frames * 72px */
             filter: grayscale(100%); /* Transforma a moeda em cinza */
+            animation: spin-coin-gray 0.8s steps(8) infinite; /* Animação específica para a moeda cinza */
         }
+
+        /* NOVO: Estilos para a moeda Rainbow */
+        .coin-sprite.rainbow {
+            width: 60px; /* 48px * 1.25 = 60px (25% maior que a dourada) */
+            height: 60px;
+            background-size: 480px 60px; /* 8 frames * 60px */
+            animation: spin-coin-rainbow 0.6s steps(8) infinite, hue-rotate 1s linear infinite; /* Mais rápida e muda de cor */
+            filter: hue-rotate(0deg); /* Ponto de partida para a rotação de matiz */
+        }
+
 
         @keyframes spin-coin {
             to { background-position-x: -384px; } /* Posição final da animação para moedas douradas */
@@ -215,6 +226,16 @@
             to { background-position-x: -576px; } /* Posição final da animação para moedas cinzas (8 frames * 72px) */
         }
         
+        /* NOVO: Keyframe para moedas Rainbow */
+        @keyframes spin-coin-rainbow {
+            to { background-position-x: -480px; } /* 8 frames * 60px */
+        }
+
+        /* NOVO: Keyframe para rotação de matiz (cor) */
+        @keyframes hue-rotate {
+            to { filter: hue-rotate(360deg); }
+        }
+
         .sprite-explosion {
             position: absolute;
             width: 48px; /* Tamanho base da explosão da moeda dourada */
@@ -231,6 +252,16 @@
             height: 72px;
             background-size: 432px 72px; /* 6 frames * 72px */
             filter: grayscale(100%);
+            animation: explode-effect-gray 0.6s steps(6) forwards; /* Animação específica para a explosão cinza */
+        }
+
+        /* NOVO: Estilo para explosão da moeda Rainbow */
+        .sprite-explosion.rainbow {
+            width: 60px; /* Tamanho da explosão da moeda rainbow */
+            height: 60px;
+            background-size: 360px 60px; /* 6 frames * 60px */
+            filter: hue-rotate(0deg); /* Ponto de partida */
+            animation: explode-effect-rainbow 0.6s steps(6) forwards, hue-rotate 0.6s linear forwards; /* Mantém a mudança de cor durante a explosão */
         }
 
         @keyframes explode-effect {
@@ -239,6 +270,11 @@
 
         @keyframes explode-effect-gray {
            to { background-position-x: -432px; } /* 6 frames * 72px */
+        }
+
+        /* NOVO: Keyframe para explosão Rainbow */
+        @keyframes explode-effect-rainbow {
+           to { background-position-x: -360px; } /* 6 frames * 60px */
         }
 
         /* Container para o saldo e os botões */
@@ -413,7 +449,7 @@
         .project.shake { animation: shake 0.5s; }
         @keyframes shake { 0%, 100% { transform: translateY(0) translateX(0); } 25% { transform: translateY(-8px) translateX(-5px); } 75% { transform: translateY(-8px) translateX(5px); } }
 
-        /* Estilos para os novos botões - agora dentro do #game-controls */
+        /* Controles do jogo */
         #game-controls button {
             position: relative; 
             pointer-events: auto; 
@@ -451,7 +487,7 @@
             background-color: rgba(255, 255, 255, 0.8); /* Flash branco */
             z-index: 3; /* Acima do overlay de bloqueio */
             opacity: 0;
-            animation: card-flash 1s ease-out forwards; /* Duração curta */
+            animation: card-flash 0.3s ease-out forwards; /* Duração curta */
             pointer-events: none;
         }
         @keyframes card-flash {
@@ -480,11 +516,9 @@
             to { background-position-x: -3456px; } 
         }
 
-        /* NOVO: Keyframes que combinam subida/movimento para fora, fade e rotação */
-        /* Esta animação usará as variáveis CSS definidas no JavaScript */
+        /* Keyframes que combinam subida/movimento para fora, fade e rotação */
         @keyframes combined-sparkle-motion {
             0% { 
-                /* Começa sem translação (posição inicial já é aleatória) */
                 transform: translate(0, 0) rotate(0deg); 
                 opacity: 0; 
             }
@@ -495,7 +529,6 @@
                 opacity: 1; 
             }
             100% { 
-                /* Translação para fora e rotação final */
                 transform: translate(var(--sparkle-travel-x, 0), var(--sparkle-travel-y, 0)) rotate(var(--sparkle-final-rotation, 0deg)); 
                 opacity: 0; /* Fade-out */
             }
@@ -602,14 +635,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const MAX_SPEED_X = 3; 
     const MAX_SPEED_Y_BASE = 2; 
 
+    // Coin types constants
     const GOLD_COIN_VALUE = 5;
     const GOLD_COIN_SIZE = 48; 
     const GOLD_COIN_SPEED_MULTIPLIER = 2.0; 
 
     const SILVER_COIN_VALUE = 2;
-    const SILVER_COIN_SIZE = Math.round(GOLD_COIN_SIZE * 1.5); 
+    const SILVER_COIN_SIZE_MULTIPLIER = 1.5; // 50% larger than gold
+    const SILVER_COIN_SPEED_MULTIPLIER = 1.0; // Same speed as gold (base)
+    const SILVER_COIN_CHANCE = 3 / 6; // 5 out of 6 chance for non-gold, meaning 1/6 for gold (before rainbow)
 
-    const SILVER_COIN_CHANCE = 5 / 6; 
+    // NEW: Rainbow Coin Constants
+    const RAINBOW_COIN_VALUE = 30; // High value
+    const RAINBOW_COIN_SIZE_MULTIPLIER = 1.25; // 25% larger than gold
+    const RAINBOW_COIN_SPEED_MULTIPLIER = 3.0; // Faster than gold
+    const RAINBOW_COIN_CHANCE = 2 / 10; // 1 in 10 chance for rainbow
 
     const saveData = () => { localStorage.setItem('mf_coinBalance', coinBalance); localStorage.setItem('mf_unlockedProjects', JSON.stringify(unlockedProjects)); };
     const loadData = () => { coinBalance = parseInt(localStorage.getItem('mf_coinBalance') || '0', 10); unlockedProjects = JSON.parse(localStorage.getItem('mf_unlockedProjects') || '[]'); updateUI(); };
@@ -640,15 +680,39 @@ document.addEventListener('DOMContentLoaded', () => {
         TOP_BOUNDARY = topBarHeight; 
     }
 
-    function triggerExplosion(x, y, isGray = false) {
+    function triggerExplosion(x, y, type = 'gold') { // Added type parameter
         const explosion = document.createElement('div');
         explosion.className = 'sprite-explosion';
-        if (isGray) {
-            explosion.classList.add('gray');
-            explosion.style.animation = 'explode-effect-gray 0.6s steps(6) forwards';
+        
+        let size, animationName;
+
+        switch(type) {
+            case 'gray':
+                explosion.classList.add('gray');
+                size = SILVER_COIN_SIZE_MULTIPLIER * GOLD_COIN_SIZE;
+                animationName = 'explode-effect-gray';
+                break;
+            case 'rainbow': // NEW: Rainbow explosion
+                explosion.classList.add('rainbow');
+                size = RAINBOW_COIN_SIZE_MULTIPLIER * GOLD_COIN_SIZE;
+                animationName = 'explode-effect-rainbow';
+                break;
+            default: // gold
+                size = GOLD_COIN_SIZE;
+                animationName = 'explode-effect';
+                break;
         }
+
+        explosion.style.width = `${size}px`;
+        explosion.style.height = `${size}px`;
         explosion.style.left = `${x}px`;
         explosion.style.top = `${y}px`;
+        explosion.style.animation = `${animationName} 0.6s steps(6) forwards`;
+        if (type === 'rainbow') {
+            explosion.style.animation += ', hue-rotate 0.6s linear forwards';
+        }
+
+
         bubbleContainer.appendChild(explosion);
         setTimeout(() => {
             explosion.remove();
@@ -684,7 +748,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Função para animação de desbloqueio de projeto (flash e múltiplos sparkles)
-   function animateProjectUnlock(projectElement) {
+    function animateProjectUnlock(projectElement) {
         // 1. Efeito de Flash
         const flash = document.createElement('div');
         flash.className = 'project-flash';
@@ -693,7 +757,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 2. Múltiplos Super Sparkles (192x192px)
         const numberOfSparkles = 5; // Quantidade de sparkles grandes a criar (ajuste conforme desejar)
         const sparkleDimension = 192; // O tamanho que você configurou para CADA sparkle (192x192px)
-        const animationDuration = 0.8; // Duração total da animação em segundos (corresponde ao seu sparkle-animation)
+        const animationDuration = 3; // Duração total da animação em segundos (corresponde ao seu sparkle-animation)
 
         const projectRect = projectElement.getBoundingClientRect();
         const marginFromEdge = 15; // How many pixels *inside* the edge the sparkle should start
@@ -740,9 +804,9 @@ document.addEventListener('DOMContentLoaded', () => {
             sparkle.style.left = `${startX - sparkleDimension / 2}px`;
             sparkle.style.top = `${startY - sparkleDimension / 2}px`;
 
-            const rotationDegrees = 180 + (Math.random() * -180); 
+            const rotationDegrees = 360 + (Math.random() * 720); 
             const rotationDirection = Math.random() < 0.5 ? 1 : -1; 
-            const rotationSpeedMultiplier = (0.5 + Math.random() * 1.2); 
+            const rotationSpeedMultiplier = (0.5 + Math.random() * 1.5); 
 
             sparkle.style.setProperty('--sparkle-travel-x', `${travelX}px`);
             sparkle.style.setProperty('--sparkle-travel-y', `${travelY}px`);
@@ -767,7 +831,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             if (flash) flash.remove();
             updateUI(); 
-        }, 1000); 
+        }, 600); 
     }
 
     function popBubblesInObstacles() {
@@ -782,7 +846,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     b.clicked = true;
                     b.element.style.display = 'none';
-                    triggerExplosion(b.x, b.y, b.isGray); 
+                    triggerExplosion(b.x, b.y, b.type); // Pass the coin type
                     break;
                 }
             }
@@ -792,27 +856,44 @@ document.addEventListener('DOMContentLoaded', () => {
     function createBubble() {
         if (bubbles.length >= MAX_BUBBLES) return;
         
-        const isGray = Math.random() < SILVER_COIN_CHANCE; 
-        const size = isGray ? SILVER_COIN_SIZE : GOLD_COIN_SIZE;
-        const value = isGray ? SILVER_COIN_VALUE : GOLD_COIN_VALUE;
-        
+        let type = 'gold';
+        let value = GOLD_COIN_VALUE;
+        let size = GOLD_COIN_SIZE;
+        let speedMultiplier = GOLD_COIN_SPEED_MULTIPLIER;
+
+        // Determine coin type
+        const randomChance = Math.random();
+        if (randomChance < RAINBOW_COIN_CHANCE) {
+            type = 'rainbow';
+            value = RAINBOW_COIN_VALUE;
+            size = Math.round(GOLD_COIN_SIZE * RAINBOW_COIN_SIZE_MULTIPLIER);
+            speedMultiplier = RAINBOW_COIN_SPEED_MULTIPLIER;
+        } else if (randomChance < SILVER_COIN_CHANCE) { // This will now be 5/6 - 1/10 = 0.833 - 0.1 = 0.733 chance for silver
+            type = 'gray';
+            value = SILVER_COIN_VALUE;
+            size = Math.round(GOLD_COIN_SIZE * SILVER_COIN_SIZE_MULTIPLIER);
+            speedMultiplier = SILVER_COIN_SPEED_MULTIPLIER;
+        }
+        // else, it defaults to 'gold'
+
         let initialY;
         let dy; 
 
+        // Randomly decide if it starts from top or bottom
         if (Math.random() < 0.5) { 
-            initialY = TOP_BOUNDARY - size; 
-            dy = (Math.random() * MAX_SPEED_Y_BASE + 0.5) * (isGray ? 1 : GOLD_COIN_SPEED_MULTIPLIER); 
+            initialY = TOP_BOUNDARY - size; // Start above the top boundary
+            dy = (Math.random() * MAX_SPEED_Y_BASE + 0.5) * speedMultiplier; // Move downwards
         } else {
-            initialY = window.innerHeight + size; 
-            dy = (Math.random() * -MAX_SPEED_Y_BASE - 0.5) * (isGray ? 1 : GOLD_COIN_SPEED_MULTIPLIER); 
+            initialY = window.innerHeight + size; // Start below the bottom of the screen
+            dy = (Math.random() * -MAX_SPEED_Y_BASE - 0.5) * speedMultiplier; // Move upwards
         }
 
         const bubbleElement = document.createElement('div');
         bubbleElement.className = 'coin-sprite';
-        if (isGray) {
-            bubbleElement.classList.add('gray');
-            bubbleElement.style.animation = 'spin-coin-gray 0.8s steps(8) infinite'; 
-        }
+        bubbleElement.classList.add(type); // Add the type class
+
+        bubbleElement.style.width = `${size}px`;
+        bubbleElement.style.height = `${size}px`;
 
         const bubble = {
             element: bubbleElement,
@@ -820,7 +901,7 @@ document.addEventListener('DOMContentLoaded', () => {
             y: initialY,
             dx: (Math.random() - 0.5) * MAX_SPEED_X * 2, 
             dy: dy, 
-            size, id: Date.now() + Math.random(), scale: 1, clicked: false, value, isGray
+            size, id: Date.now() + Math.random(), scale: 1, clicked: false, value, type // Store the type
         };
 
         bubble.element.addEventListener('click', () => {
@@ -832,7 +913,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showScorePop(bubble.x, bubble.y, bubble.value); 
 
             bubble.element.style.display = 'none';
-            triggerExplosion(bubble.x, bubble.y, bubble.isGray);
+            triggerExplosion(bubble.x, bubble.y, bubble.type); // Pass the type here
         });
 
         bubbles.push(bubble);
@@ -846,19 +927,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentObstacleRects = Array.from(document.querySelectorAll('.project'))
                                              .map(elem => elem.getBoundingClientRect());
 
-        for (const b of [...bubbles]) {
-            if (b.clicked) continue;
+        for (const b of bubbles) { // Iterate directly over bubbles array
+            if (b.clicked) continue; // Skip if already clicked
+            
+            // Update position
             b.x += b.dx * deltaTime;
             b.y += b.dy * deltaTime;
-            b.dy += 0.001 * deltaTime; 
+            b.dy += 0.001 * deltaTime; // Apply gravity
 
+            // Boundary checks and bounce
             if (b.x <= 0) { b.x = 0; b.dx *= -BOUNCE_DAMPING; }
             if (b.x + b.size >= window.innerWidth) { b.x = window.innerWidth - b.size; b.dx *= -BOUNCE_DAMPING; }
             
+            // Remove if off screen
             if ((b.dy < 0 && b.y + b.size < TOP_BOUNDARY) || (b.dy > 0 && b.y > window.innerHeight + b.size)) {
-                b.clicked = true; 
+                b.clicked = true; // Mark for removal
             }
 
+            // Collision with projects
             for (const rect of currentObstacleRects) {
                 const bubbleRect = { left: b.x, right: b.x + b.size, top: b.y, bottom: b.y + b.size };
                 if (bubbleRect.right > rect.left && bubbleRect.left < rect.right && bubbleRect.bottom > rect.top && bubbleRect.top < rect.bottom) {
@@ -875,6 +961,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
+            // Hover effect (scaling)
             const distX = mouse.x - (b.x + b.size / 2);
             const distY = mouse.y - (b.y + b.size / 2);
             const distance = Math.sqrt(distX * distX + distY * distY);
@@ -882,16 +969,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             b.scale += (targetScale - b.scale) * 0.1 * deltaTime;
 
+            // Apply transform to element
             b.element.style.transform = `translate(${b.x}px, ${b.y}px) scale(${b.scale})`;
         }
 
+        // Clean up clicked bubbles outside the loop to avoid modifying array while iterating
         const bubblesToRemove = bubbles.filter(b => b.clicked);
         for (const b of bubblesToRemove) {
             if (b.element.parentElement) {
                 b.element.remove();
             }
         }
-        bubbles = bubbles.filter(b => !b.clicked);
+        bubbles = bubbles.filter(b => !b.clicked); // Recreate the bubbles array without the removed ones
 
         requestAnimationFrame(gameLoop);
     }
