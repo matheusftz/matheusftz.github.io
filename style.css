@@ -1,42 +1,43 @@
 body {
-    font-family: 'Merriweather', serif; /* Fonte principal com serifa */
+    font-family: 'Merriweather', serif;
     margin: 0;
     padding: 0;
-    background: #1a1a1a; /* Fundo escuro */
-    color: #e0e0e0; /* Cor de texto padrão */
-    /* Adicionar uma imagem de fundo sutil para Dark Fantasy */
-    background-image: url('https://www.transparenttextures.com/patterns/dark-denim.png'); /* Exemplo de textura. Baixe e use um caminho local se preferir. */
+    background: #121212; /* Fundo mais escuro e neutro */
+    color: #e0e0e0;
+    background-image: url('https://www.transparenttextures.com/patterns/dark-denim.png'); /* Mantém a textura escura sutil */
     background-repeat: repeat;
-    background-attachment: fixed; /* Fixa a textura para um efeito sutil */
+    background-attachment: fixed;
 }
 
-/* Oculta o cabeçalho original se ele ainda estiver sendo usado em algum lugar */
 header {
     display: none;
 }
+
+/* Cores Douradas/Bronze: #b8860b (Goldenrod), #daa520 (Goldenrod escura), #ffd700 (Ouro puro) */
+/* Cores Neutras: #1a1a1a, #2a2a2a, #3a3a3a, #555, #ccc, #e0e0e0 */
 
 .top-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem 2rem;
-    background: rgba(10, 10, 10, 0.8); /* Fundo semi-transparente para o top-bar */
+    background: rgba(10, 10, 10, 0.9); /* Fundo quase opaco para o top-bar */
     color: #e0e0e0;
-    font-family: 'Cinzel', serif; /* Fonte para o nome e links */
+    font-family: 'Cinzel', serif;
     font-weight: 700;
     text-transform: uppercase;
     font-size: 0.9rem;
-    border-bottom: 2px solid #4a004a; /* Borda roxa escura */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* Sombra mais pesada */
-    position: sticky; /* Mantém o top-bar no topo ao rolar */
+    border-bottom: 2px solid #b8860b; /* Borda dourada */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* Sombra mais forte */
+    position: sticky;
     top: 0;
     z-index: 1000;
 }
 
 .top-bar .name {
-    font-size: 1.2rem; /* Tamanho do seu nome maior */
+    font-size: 1.2rem;
     letter-spacing: 0.15em;
-    color: #b8860b; /* Cor de bronze/ouro */
+    color: #ffd700; /* Dourado puro para o nome */
 }
 
 .top-bar .nav-links a {
@@ -47,12 +48,12 @@ header {
 }
 
 .top-bar .nav-links a:hover {
-    color: #dda0dd; /* Um roxo mais claro no hover */
-    text-shadow: 0 0 8px rgba(221, 160, 221, 0.8); /* Glow roxo */
+    color: #ffd700; /* Dourado no hover */
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.8); /* Glow dourado */
 }
 
 .top-bar .nav-links .separator {
-    color: #666; /* Cor da barra divisória */
+    color: #555;
     margin: 0 0.2rem;
 }
 
@@ -64,18 +65,18 @@ main {
 
 .intro {
     text-align: left;
-    margin-bottom: 4rem; /* Mais espaço abaixo do intro */
-    padding-top: 3rem; /* Mais espaço no topo */
+    margin-bottom: 4rem;
+    padding-top: 3rem;
     padding-left: 1rem;
 }
 
 .intro h1 {
-    font-family: 'Cinzel', serif; /* Título principal com fonte de fantasia */
-    font-size: 3.8rem; /* Título maior */
-    color: #e0e0e0; /* Cor mais neutra para o título principal, para contraste com o dourado do nome */
+    font-family: 'Cinzel', serif;
+    font-size: 3.8rem;
+    color: #e0e0e0; /* Título principal mais neutro, mas ainda proeminente */
     margin-bottom: 0.8rem;
     letter-spacing: 0.08em;
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6); /* Sombra no texto */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Sombra mais escura */
 }
 
 .intro p {
@@ -87,7 +88,7 @@ main {
 .project-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 3rem; /* Aumenta o espaçamento entre os cards */
+    gap: 3rem;
     margin-top: 2rem;
 }
 
@@ -96,41 +97,39 @@ main {
     border-radius: 8px;
     text-decoration: none;
     color: inherit;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5), 0 0 5px rgba(184, 134, 11, 0.4); /* Sombra principal e um pequeno glow dourado */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.6), 0 0 8px rgba(255, 215, 0, 0.3); /* Sombra principal e um pequeno glow dourado */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    border: 1px solid #4a004a; /* Borda roxa escura */
+    border: 1px solid #555; /* Borda cinza neutra */
 }
 
 .project:hover {
-    transform: translateY(-8px); /* Elevação maior no hover */
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7), 0 0 10px rgba(184, 134, 11, 0.8); /* Glow mais intenso */
+    transform: translateY(-8px);
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255, 215, 0, 0.7); /* Glow dourado mais intenso */
 }
 
 .project img {
     width: 100%;
-    height: 220px; /* Altura da thumbnail ajustada */
+    height: 220px;
     object-fit: cover;
     display: block;
-    border-bottom: 3px solid #4a004a; /* Linha de destaque mais grossa */
+    border-bottom: 3px solid #b8860b; /* Linha de destaque dourada */
 }
 
 .project h3 {
-    font-family: 'Cinzel', serif; /* Título do projeto com fonte de fantasia */
+    font-family: 'Cinzel', serif;
     margin: 1.2rem 1.2rem 0.6rem 1.2rem;
-    color: #dda0dd; /* Título do projeto em roxo claro */
+    color: #ffd700; /* Título do projeto em dourado puro */
     letter-spacing: 0.05em;
 }
 
 .project p {
-    margin: 0 1.2rem 0.6rem 1.2rem; /* Ajustado para remover a parte de role */
+    margin: 0 1.2rem 1.2rem 1.2rem; /* Ajustado para preencher o espaço da role removida */
     color: #ccc;
     font-size: 1rem;
 }
-
-/* Removido: .project p.role {} */
 
 /* Estilos para a página de detalhes do projeto (afterlife.html) */
 .video iframe {
@@ -140,24 +139,24 @@ main {
     display: block;
     margin: 2rem auto;
     border: 3px solid #b8860b; /* Borda dourada/bronze */
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.6), 0 0 8px rgba(184, 134, 11, 0.6);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7), 0 0 10px rgba(255, 215, 0, 0.5); /* Sombra e glow mais fortes */
 }
 
 .description {
     background-color: #2a2a2a;
-    padding: 2.5rem; /* Padding maior */
+    padding: 2.5rem;
     border-radius: 8px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5), 0 0 5px rgba(184, 134, 11, 0.4);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7), 0 0 8px rgba(255, 215, 0, 0.4);
     margin-bottom: 3rem;
-    border: 1px solid #4a004a;
+    border: 1px solid #3a3a3a; /* Borda cinza mais sutil */
 }
 
 .description h2 {
     font-family: 'Cinzel', serif;
-    color: #dda0dd;
+    color: #ffd700; /* Título em dourado */
     margin-top: 0;
     margin-bottom: 1.5rem;
-    font-size: 2rem;
+    font-size: 2.2rem; /* Um pouco maior */
     letter-spacing: 0.05em;
 }
 
@@ -168,29 +167,29 @@ main {
 }
 
 .description strong {
-    color: #b8860b; /* Destaque em bronze */
+    color: #ffd700; /* Destaque em dourado */
 }
 
 .gallery-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem; /* Aumenta o gap da galeria */
+    gap: 1.5rem;
     margin-top: 1.5rem;
 }
 
 .gallery-grid img {
     width: 100%;
-    height: 180px; /* Altura da imagem da galeria ajustada */
+    height: 180px;
     object-fit: cover;
     cursor: pointer;
     border-radius: 6px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 2px solid #4a004a; /* Borda roxa */
+    border: 2px solid #555; /* Borda cinza sutil */
 }
 
 .gallery-grid img:hover {
-    transform: scale(1.05); /* Efeito de zoom maior */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8), 0 0 8px rgba(184, 134, 11, 0.6);
+    transform: scale(1.05);
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 215, 0, 0.7); /* Glow dourado no hover */
 }
 
 footer {
@@ -199,18 +198,18 @@ footer {
     font-size: 0.9rem;
     color: #888;
     margin-top: 4rem;
-    border-top: 2px solid #4a004a; /* Separador mais proeminente */
-    background: rgba(10, 10, 10, 0.8);
+    border-top: 2px solid #3a3a3a; /* Separador cinza */
+    background: rgba(10, 10, 10, 0.9);
 }
 
 footer p a {
-    color: #dda0dd; /* Cor do link de voltar */
+    color: #ffd700; /* Cor do link de voltar dourado */
     text-decoration: none;
     transition: color 0.2s ease;
 }
 
 footer p a:hover {
-    color: #b8860b; /* Mudar para dourado no hover */
+    color: #ffcc00; /* Dourado mais claro no hover */
 }
 
 
@@ -221,18 +220,18 @@ footer p a:hover {
     padding: 3rem;
     background-color: #2a2a2a;
     border-radius: 8px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5), 0 0 8px rgba(184, 134, 11, 0.5);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7), 0 0 10px rgba(255, 215, 0, 0.5);
     text-align: center;
-    border: 2px solid #4a004a;
+    border: 2px solid #3a3a3a; /* Borda cinza */
 }
 
 .contact-section h2 {
     font-family: 'Cinzel', serif;
-    color: #dda0dd;
+    color: #ffd700; /* Título dourado */
     font-size: 2.5rem;
     margin-bottom: 2rem;
     letter-spacing: 0.08em;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .contact-section p {
@@ -244,8 +243,8 @@ footer p a:hover {
 
 .contact-section a {
     display: inline-block;
-    background-color: #4a004a; /* Fundo do botão roxo */
-    color: #e0e0e0;
+    background-color: #3a3a3a; /* Fundo do botão cinza escuro */
+    color: #ffd700; /* Texto dourado */
     padding: 0.8rem 1.5rem;
     border-radius: 5px;
     text-decoration: none;
@@ -254,11 +253,11 @@ footer p a:hover {
     transition: background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
     margin: 0.5rem;
     border: 1px solid #b8860b; /* Borda dourada */
-    box-shadow: 0 0 5px rgba(184, 134, 11, 0.3);
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
 }
 
 .contact-section a:hover {
-    background-color: #b8860b; /* Fundo dourado no hover */
+    background-color: #b8860b; /* Fundo bronze no hover */
     color: #1a1a1a; /* Texto escuro no hover */
-    box-shadow: 0 0 10px rgba(184, 134, 11, 0.8);
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.8);
 }
