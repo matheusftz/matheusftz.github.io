@@ -6,10 +6,46 @@ body {
     color: #e0e0e0; /* Cor de texto padrão */
 }
 
-/* Esconde o cabeçalho original, se houver */
+/* Oculta o cabeçalho original se ele ainda estiver sendo usado em algum lugar */
 header {
     display: none;
 }
+
+.top-bar {
+    display: flex;
+    justify-content: space-between; /* Alinha itens nas extremidades */
+    align-items: center; /* Centraliza verticalmente */
+    padding: 1.5rem 2rem; /* Aumenta o padding para corresponder à imagem */
+    background: #0a0a0a; /* Fundo do top-bar, mais escuro que o body */
+    color: #e0e0e0;
+    font-family: 'Oxanium', sans-serif; /* Fonte para o nome e links */
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.9rem; /* Tamanho da fonte para o top-bar */
+    border-bottom: 1px solid #333; /* Linha sutil abaixo do top-bar */
+}
+
+.top-bar .name {
+    font-size: 1rem; /* Tamanho do seu nome */
+    letter-spacing: 0.1em; /* Espaçamento entre letras */
+}
+
+.top-bar .nav-links a {
+    color: #e0e0e0; /* Cor dos links */
+    text-decoration: none;
+    margin: 0 0.2rem;
+    transition: color 0.2s ease;
+}
+
+.top-bar .nav-links a:hover {
+    color: #00ffff; /* Ciano no hover */
+}
+
+.top-bar .nav-links .separator {
+    color: #555; /* Cor da barra divisória */
+    margin: 0 0.1rem;
+}
+
 
 main {
     padding: 2rem;
@@ -18,16 +54,18 @@ main {
 }
 
 .intro {
-    text-align: center;
+    text-align: left; /* Alinhamento à esquerda, como na imagem */
     margin-bottom: 3rem;
     padding-top: 2rem; /* Espaçamento no topo */
+    padding-left: 1rem; /* Pequeno padding para alinhar com os cards */
 }
 
 .intro h1 {
     font-family: 'Oxanium', sans-serif; /* Fonte para o título principal */
     font-size: 3rem;
-    color: #00ffff; /* Ciano para destaque */
+    color: #e0e0e0; /* Título principal mais neutro */
     margin-bottom: 0.5rem;
+    letter-spacing: 0.05em; /* Espaçamento para o título */
 }
 
 .intro p {
@@ -35,27 +73,7 @@ main {
     color: #999;
 }
 
-.skills-short {
-    text-align: center;
-    margin-bottom: 3rem;
-    padding: 1.5rem;
-    background-color: #2a2a2a; /* Fundo para a seção de habilidades */
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); /* Pequeno glow */
-}
-
-.skills-short h2 {
-    font-family: 'Oxanium', sans-serif;
-    color: #00ffff;
-    margin-top: 0;
-    margin-bottom: 1rem;
-}
-
-.skills-short p {
-    font-size: 1rem;
-    color: #ccc;
-    line-height: 1.5;
-}
+/* Removida a seção .skills-short daqui */
 
 .project-list {
     display: grid;
@@ -66,7 +84,7 @@ main {
 
 .project {
     background: #2a2a2a; /* Fundo dos cards de projeto */
-    border-radius: 8px;
+    border-radius: 8px; /* Bordas arredondadas */
     text-decoration: none;
     color: inherit;
     box-shadow: 0 0 8px rgba(0, 255, 255, 0.3); /* Sombra com glow ciano */
