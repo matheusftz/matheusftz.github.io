@@ -198,6 +198,18 @@
             image-rendering: pixelated;
         }
 
+.coin-sprite::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 150%; /* Aumenta a largura da hitbox em 50% */
+    height: 150%; /* Aumenta a altura da hitbox em 50% */
+    transform: translate(-50%, -50%); /* Centraliza o pseudo-elemento */
+    /* background-color: rgba(255, 0, 0, 0.2);  Descomente para visualizar a hitbox */
+    pointer-events: auto; /* Garante que o pseudo-elemento também é clicável */
+    z-index: 1; /* Garante que o pseudo-elemento está acima da imagem da moeda para clique */
+}
         /* Estilos para a moeda cinza */
         .coin-sprite.gray {
             width: 72px; /* 48px * 1.5 = 72px (50% maior) */
@@ -487,7 +499,7 @@
             background-color: rgba(255, 255, 255, 0.8); /* Flash branco */
             z-index: 3; /* Acima do overlay de bloqueio */
             opacity: 0;
-            animation: card-flash 0.3s ease-out forwards; /* Duração curta */
+            animation: card-flash 0.6s ease-out forwards; /* Duração curta */
             pointer-events: none;
         }
         @keyframes card-flash {
@@ -499,8 +511,8 @@
         /* Renomeado: Estilo para um sparkle grande individual (192x192px) */
         .individual-super-sparkle { 
             position: absolute; /* Agora posicionado absolutamente dentro de bubble-container */
-            width: 192px; 
-            height: 192px; 
+            width: 128px; 
+            height: 128px; 
             background-image: var(--sparkle-spritesheet); 
             background-size: auto 100%; 
             z-index: 4; 
@@ -513,7 +525,7 @@
         
         /* Animação do Spritesheet */
         @keyframes sparkle-animation {
-            to { background-position-x: -3456px; } 
+            to { background-position-x: -2304px; } 
         }
 
         /* Keyframes que combinam subida/movimento para fora, fade e rotação */
@@ -754,13 +766,13 @@ document.addEventListener('DOMContentLoaded', () => {
         flash.className = 'project-flash';
         projectElement.appendChild(flash); 
 
-        // 2. Múltiplos Super Sparkles (192x192px)
-        const numberOfSparkles = 5; // Quantidade de sparkles grandes a criar (ajuste conforme desejar)
-        const sparkleDimension = 192; // O tamanho que você configurou para CADA sparkle (192x192px)
-        const animationDuration = 3; // Duração total da animação em segundos (corresponde ao seu sparkle-animation)
+        // 2. Múltiplos Super Sparkles
+        const numberOfSparkles = 6; // Quantidade de sparkles grandes a criar
+        const sparkleDimension = 128; // O tamanho que você configurou para CADA sparkle
+        const animationDuration = 1.4; // Duração total da animação em segundos (corresponde ao seu sparkle-animation)
 
         const projectRect = projectElement.getBoundingClientRect();
-        const marginFromEdge = 15; // How many pixels *inside* the edge the sparkle should start
+        const marginFromEdge = 50; // How many pixels *inside* the edge the sparkle should start
 
         for (let i = 0; i < numberOfSparkles; i++) {
             const sparkle = document.createElement('div');
@@ -804,7 +816,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sparkle.style.left = `${startX - sparkleDimension / 2}px`;
             sparkle.style.top = `${startY - sparkleDimension / 2}px`;
 
-            const rotationDegrees = 360 + (Math.random() * 720); 
+            const rotationDegrees = 180 + (Math.random() * -360); 
             const rotationDirection = Math.random() < 0.5 ? 1 : -1; 
             const rotationSpeedMultiplier = (0.5 + Math.random() * 1.5); 
 
