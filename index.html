@@ -224,7 +224,7 @@
             width: 60px; /* 48px * 1.25 = 60px (25% maior que a dourada) */
             height: 60px;
             background-size: 480px 60px; /* 8 frames * 60px */
-            animation: spin-coin-rainbow 0.6s steps(8) infinite, hue-rotate 1s linear infinite; /* Mais rápida e muda de cor */
+            animation: spin-coin-rainbow 0.6s steps(8) infinite, hue-rotate 0.2s linear infinite; /* Mais rápida e muda de cor */
             filter: hue-rotate(0deg); /* Ponto de partida para a rotação de matiz */
         }
 
@@ -585,32 +585,32 @@
         <p>Game Designer, Unity, 2022.</p>
     </a>
 
-<a href="projects/clean-castle.html" class="project locked" data-cost="15"> <div class="project-lock">
-            <span class="project-cost">15</span>
+<a href="projects/clean-castle.html" class="project locked" data-cost="10"> <div class="project-lock">
+            <span class="project-cost">10</span>
         </div>
         <img src="images/CleanCastleThumb.webp" alt="Clean Castle Thumbnail">
         <h3>Clean Castle</h3>
         <p>Level Designer, Unity, 2022.</p>
     </a>
 
-<a href="projects/from-the-main-square.html" class="project locked" data-cost="20"> <div class="project-lock">
-            <span class="project-cost">20</span>
+<a href="projects/from-the-main-square.html" class="project locked" data-cost="10"> <div class="project-lock">
+            <span class="project-cost">10</span>
         </div>
         <img src="images/FromTheMainSquareThumb.webp" alt="From the Main Square Thumbnail">
         <h3>From the Main Square</h3>
         <p>Level Designer/Tech Artist, Unity, 2019.</p>
     </a>
-             <a href="https://msfrantz.itch.io/bomb-mob" target="_blank" class="project locked" data-cost="30">
+             <a href="https://msfrantz.itch.io/bomb-mob" target="_blank" class="project locked" data-cost="20">
         <div class="project-lock">
-            <span class="project-cost">30</span>
+            <span class="project-cost">20</span>
         </div>
         <img src="images/BombMob.webp" alt="Bomb Mob Thumbnail">
         <h3>Bomb Mob</h3>
         <p>Made using Unreal, 2019.</p>
     </a>
-            <a class="project" href="projects/project-lua.html" data-cost="15">
+            <a class="project" href="projects/project-lua.html" data-cost="20">
                 <div class="project-lock">
-                    <span class="project-cost">15</span>
+                    <span class="project-cost">20</span>
                 </div>
                 <img src="images/LuaThumb.webp" alt="Project L.U.A. Thumbnail">
                 <h3>Project L.U.A.</h3>
@@ -624,14 +624,14 @@
                 <h3>Happy Sheep</h3>
                 <p>Made using Unity, 2017.</p>
             </a>
-<a href="projects/kenophobia.html" class="project locked" data-cost="25"> <div class="project-lock">
-            <span class="project-cost">25</span> </div>
+<a href="projects/kenophobia.html" class="project locked" data-cost="50"> <div class="project-lock">
+            <span class="project-cost">50</span> </div>
         <img src="images/KenoThumb.webp" alt="Kenophobia Thumbnail">
         <h3>Kenophobia</h3>
         <p>Made using Unity, 2018.</p> </a>
-<a class="project" href="projects/afterlife.html" data-cost="10">
+<a class="project" href="projects/afterlife.html" data-cost="50">
                 <div class="project-lock">
-                    <span class="project-cost">10</span>
+                    <span class="project-cost">50</span>
                 </div>
                 <img src="images/AfterlifeThumb.webp" alt="Afterlife Thumbnail">
                 <h3>Afterlife: The Judgement</h3>
@@ -661,19 +661,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const MAX_SPEED_Y_BASE = 2; 
 
     // Coin types constants
-    const GOLD_COIN_VALUE = 5;
+    const GOLD_COIN_VALUE = 10;
     const GOLD_COIN_SIZE = 48; 
     const GOLD_COIN_SPEED_MULTIPLIER = 2.0; 
 
-    const SILVER_COIN_VALUE = 2;
+    const SILVER_COIN_VALUE = 5;
     const SILVER_COIN_SIZE_MULTIPLIER = 1.5; // 50% larger than gold
     const SILVER_COIN_SPEED_MULTIPLIER = 1.0; // Same speed as gold (base)
     const SILVER_COIN_CHANCE = 3 / 6; // 5 out of 6 chance for non-gold, meaning 1/6 for gold (before rainbow)
 
     // NEW: Rainbow Coin Constants
-    const RAINBOW_COIN_VALUE = 30; // High value
-    const RAINBOW_COIN_SIZE_MULTIPLIER = 1.25; // 25% larger than gold
-    const RAINBOW_COIN_SPEED_MULTIPLIER = 3.0; // Faster than gold
+    const RAINBOW_COIN_VALUE = 50; // High value
+    const RAINBOW_COIN_SIZE_MULTIPLIER = 1.2;
+    const RAINBOW_COIN_SPEED_MULTIPLIER = 5.0; // Faster than gold
     const RAINBOW_COIN_CHANCE = 2 / 10; // 1 in 10 chance for rainbow
 
     const saveData = () => { localStorage.setItem('mf_coinBalance', coinBalance); localStorage.setItem('mf_unlockedProjects', JSON.stringify(unlockedProjects)); };
